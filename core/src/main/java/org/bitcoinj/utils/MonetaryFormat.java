@@ -45,6 +45,8 @@ import org.bitcoinj.core.Monetary;
  */
 public final class MonetaryFormat {
 
+    // TODO: 14/12/2017 Add BCH
+
     /** Standard format for the BTC denomination. */
     public static final MonetaryFormat BTC = new MonetaryFormat().shift(0).minDecimals(2).repeatOptionalDecimals(2, 3);
     /** Standard format for the mBTC denomination. */

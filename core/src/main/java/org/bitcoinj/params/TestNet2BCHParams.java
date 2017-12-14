@@ -16,30 +16,21 @@
 
 package org.bitcoinj.params;
 
-import org.bitcoinj.core.Utils;
-
 import static com.google.common.base.Preconditions.checkState;
+
+import org.bitcoinj.core.Utils;
 
 /**
  * Parameters for the old version 2 testnet. This is not useful to you - it exists only because some unit tests are
  * based on it.
  */
-public class TestNet2Params extends AbstractBitcoinNetParams {
+public class TestNet2BCHParams extends AbstractBitcoinNetParams {
     public static final int TESTNET_MAJORITY_WINDOW = 100;
     public static final int TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED = 75;
     public static final int TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 51;
 
-    public TestNet2Params(String uriScheme) {
-        super(uriScheme);
-        init();
-    }
-
-    public TestNet2Params() {
-        super();
-        init();
-    }
-
-    private void init() {
+    public TestNet2BCHParams() {
+        super(AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME);
         id = ID_TESTNET;
         packetMagic = 0xfabfb5daL;
         port = 18333;
@@ -67,10 +58,10 @@ public class TestNet2Params extends AbstractBitcoinNetParams {
         majorityWindow = TESTNET_MAJORITY_WINDOW;
     }
 
-    private static TestNet2Params instance;
-    public static synchronized TestNet2Params get() {
+    private static TestNet2BCHParams instance;
+    public static synchronized TestNet2BCHParams get() {
         if (instance == null) {
-            instance = new TestNet2Params();
+            instance = new TestNet2BCHParams();
         }
         return instance;
     }

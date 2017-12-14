@@ -55,12 +55,15 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBitcoinNetParams.class);
 
+    /**
+     * Constructor which defaults to bitcoin uri scheme.
+     */
     public AbstractBitcoinNetParams() {
         super();
     }
 
     /**
-     * Constructor which allows uriScheme to be set.
+     * Constructor which allows uri scheme to be set.
      * @param uriScheme
      */
     public AbstractBitcoinNetParams(String uriScheme) {
