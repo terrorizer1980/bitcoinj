@@ -49,12 +49,23 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
      * Scheme part for Bitcoin URIs.
      */
     public static final String BITCOIN_SCHEME = "bitcoin";
+    public static final String BITCOIN_CASH_SCHEME = "bitcoincash";
+    private String uriScheme = BITCOIN_SCHEME;
     public static final int REWARD_HALVING_INTERVAL = 210000;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBitcoinNetParams.class);
 
     public AbstractBitcoinNetParams() {
         super();
+    }
+
+    /**
+     * Constructor which allows uriScheme to be set.
+     * @param uriScheme
+     */
+    public AbstractBitcoinNetParams(String uriScheme) {
+        super();
+        this.uriScheme = uriScheme;
     }
 
     /**
@@ -170,7 +181,7 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
 
     @Override
     public String getUriScheme() {
-        return BITCOIN_SCHEME;
+        return uriScheme;
     }
 
     @Override
