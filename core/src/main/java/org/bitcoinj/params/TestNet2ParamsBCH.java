@@ -24,15 +24,15 @@ import org.bitcoinj.core.Utils;
  * Parameters for the old version 2 testnet. This is not useful to you - it exists only because some unit tests are
  * based on it.
  */
-public class TestNet2BCHParams extends AbstractBitcoinNetParams {
+public class TestNet2ParamsBCH extends AbstractBitcoinNetParams {
     public static final int TESTNET_MAJORITY_WINDOW = 100;
     public static final int TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED = 75;
     public static final int TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 51;
 
-    public TestNet2BCHParams() {
+    public TestNet2ParamsBCH() {
         super(AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME);
         id = ID_TESTNET;
-        packetMagic = 0xfabfb5daL;
+        packetMagic = 0xdab5bffaL;
         port = 18333;
         addressHeader = 111;
         p2shHeader = 196;
@@ -58,10 +58,10 @@ public class TestNet2BCHParams extends AbstractBitcoinNetParams {
         majorityWindow = TESTNET_MAJORITY_WINDOW;
     }
 
-    private static TestNet2BCHParams instance;
-    public static synchronized TestNet2BCHParams get() {
+    private static TestNet2ParamsBCH instance;
+    public static synchronized TestNet2ParamsBCH get() {
         if (instance == null) {
-            instance = new TestNet2BCHParams();
+            instance = new TestNet2ParamsBCH();
         }
         return instance;
     }

@@ -23,15 +23,15 @@ import org.bitcoinj.core.Block;
  * Network parameters used by the bitcoinj unit tests (and potentially your own). This lets you solve a block using
  * {@link Block#solve()} by setting difficulty to the easiest possible.
  */
-public class UnitTestBCHParams extends AbstractBitcoinNetParams {
+public class UnitTestParamsBCH extends AbstractBitcoinNetParams {
     public static final int UNITNET_MAJORITY_WINDOW = 8;
     public static final int TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED = 6;
     public static final int TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 4;
 
-    public UnitTestBCHParams() {
+    public UnitTestParamsBCH() {
         super(AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME);
         id = ID_UNITTESTNET;
-        packetMagic = 0x0b110907;
+        packetMagic = 0xf4e5f3f4L;
         addressHeader = 111;
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
@@ -55,10 +55,10 @@ public class UnitTestBCHParams extends AbstractBitcoinNetParams {
         majorityWindow = 7;
     }
 
-    private static UnitTestBCHParams instance;
-    public static synchronized UnitTestBCHParams get() {
+    private static UnitTestParamsBCH instance;
+    public static synchronized UnitTestParamsBCH get() {
         if (instance == null) {
-            instance = new UnitTestBCHParams();
+            instance = new UnitTestParamsBCH();
         }
         return instance;
     }

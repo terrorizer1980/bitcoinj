@@ -33,12 +33,12 @@ import org.bitcoinj.store.BlockStoreException;
  * Parameters for the testnet, a separate public instance of Bitcoin that has relaxed rules suitable for development
  * and testing of applications and new Bitcoin versions.
  */
-public class TestNet3BCHParams extends AbstractBitcoinNetParams {
-    public TestNet3BCHParams() {
+public class TestNet3ParamsBCH extends AbstractBitcoinNetParams {
+    public TestNet3ParamsBCH() {
         super(AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME);
         id = ID_TESTNET;
         // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
-        packetMagic = 0x0b110907;
+        packetMagic = 0xf4e5f3f4L;
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
         maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
@@ -57,11 +57,12 @@ public class TestNet3BCHParams extends AbstractBitcoinNetParams {
         alertSigningKey = Utils.HEX.decode("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
 
         dnsSeeds = new String[] {
-                "testnet-seed.bitcoin.jonasschnelli.ch", // Jonas Schnelli
-                "testnet-seed.bluematt.me",              // Matt Corallo
-                "testnet-seed.bitcoin.petertodd.org",    // Peter Todd
-                "testnet-seed.bitcoin.schildbach.de",    // Andreas Schildbach
-                "bitcoin-testnet.bloqseeds.net",         // Bloq
+            "testnet-seed.bitcoinabc.org",
+            "testnet-seed-abc.bitcoinforks.org",
+            "testnet-seed.bitcoinunlimited.info",
+            "testnet-seed.bitprim.org",
+            "testnet-seed.deadalnix.me",
+            "testnet-seeder.criptolayer.net"
         };
         addrSeeds = null;
         bip32HeaderPub = 0x043587CF;
@@ -72,10 +73,10 @@ public class TestNet3BCHParams extends AbstractBitcoinNetParams {
         majorityWindow = TestNet2Params.TESTNET_MAJORITY_WINDOW;
     }
 
-    private static TestNet3BCHParams instance;
-    public static synchronized TestNet3BCHParams get() {
+    private static TestNet3ParamsBCH instance;
+    public static synchronized TestNet3ParamsBCH get() {
         if (instance == null) {
-            instance = new TestNet3BCHParams();
+            instance = new TestNet3ParamsBCH();
         }
         return instance;
     }

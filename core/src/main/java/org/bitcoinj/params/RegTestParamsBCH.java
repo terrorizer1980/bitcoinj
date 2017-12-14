@@ -24,10 +24,10 @@ import org.bitcoinj.core.Block;
 /**
  * Network parameters for the regression test mode of bitcoind in which all blocks are trivially solvable.
  */
-public class RegTestBCHParams extends TestNet2Params {
+public class RegTestParamsBCH extends TestNet2Params {
     private static final BigInteger MAX_TARGET = new BigInteger("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
 
-    public RegTestBCHParams() {
+    public RegTestParamsBCH() {
         super(AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME);
         // Difficulty adjustments are disabled for regtest. 
         // By setting the block interval for difficulty adjustments to Integer.MAX_VALUE we make sure difficulty never changes.    
@@ -51,7 +51,7 @@ public class RegTestBCHParams extends TestNet2Params {
 
     @Override
     public Block getGenesisBlock() {
-        synchronized (RegTestBCHParams.class) {
+        synchronized (RegTestParamsBCH.class) {
             if (genesis == null) {
                 genesis = super.getGenesisBlock();
                 genesis.setNonce(2);
@@ -63,10 +63,10 @@ public class RegTestBCHParams extends TestNet2Params {
         }
     }
 
-    private static RegTestBCHParams instance;
-    public static synchronized RegTestBCHParams get() {
+    private static RegTestParamsBCH instance;
+    public static synchronized RegTestParamsBCH get() {
         if (instance == null) {
-            instance = new RegTestBCHParams();
+            instance = new RegTestParamsBCH();
         }
         return instance;
     }
