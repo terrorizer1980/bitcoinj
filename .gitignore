@@ -6,3 +6,6 @@ target
 *.iml
 *.chain
 *.spvchain
+
+# Mac OS X clutter
+*.DS_Store
