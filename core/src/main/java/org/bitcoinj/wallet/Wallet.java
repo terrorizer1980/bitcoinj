@@ -685,23 +685,6 @@ public class Wallet extends BaseTaggableObject
     public Address currentChangeAddress() {
         return currentAddress(KeyChain.KeyPurpose.CHANGE);
     }
-    /**
-     * @deprecated use {@link #currentChangeAddress()} instead.
-     */
-    public Address getChangeAddress() {
-        return currentChangeAddress();
-    }
-
-    /**
-     * <p>Deprecated alias for {@link #importKey(ECKey)}.</p>
-     *
-     * <p><b>Replace with either {@link #freshReceiveKey()} if your call is addKey(new ECKey()), or with {@link #importKey(ECKey)}
-     * which does the same thing this method used to, but with a better name.</b></p>
-     */
-    @Deprecated
-    public boolean addKey(ECKey key) {
-        return importKey(key);
-    }
 
     /**
      * <p>Imports the given ECKey to the wallet.</p>
@@ -711,12 +694,6 @@ public class Wallet extends BaseTaggableObject
      */
     public boolean importKey(ECKey key) {
         return importKeys(Lists.newArrayList(key)) == 1;
-    }
-
-    /** Replace with {@link #importKeys(java.util.List)}, which does the same thing but with a better name. */
-    @Deprecated
-    public int addKeys(List<ECKey> keys) {
-        return importKeys(keys);
     }
 
     /**
@@ -2569,18 +2546,6 @@ public class Wallet extends BaseTaggableObject
         addTransactionConfidenceEventListener(Threading.USER_THREAD, listener);
     }
 
-    /** Use the more specific listener methods instead */
-    @Deprecated
-    public void addEventListener(WalletEventListener listener, Executor executor) {
-        addCoinsReceivedEventListener(executor, listener);
-        addCoinsSentEventListener(executor, listener);
-        addChangeEventListener(executor, listener);
-        addKeyChainEventListener(executor, listener);
-        addReorganizeEventListener(executor, listener);
-        addScriptChangeEventListener(executor, listener);
-        addTransactionConfidenceEventListener(executor, listener);
-    }
-
     /**
      * Adds an event listener object. Methods on this object are called when something interesting happens,
      * like receiving money. Runs the listener methods in the user thread.
@@ -2697,21 +2662,6 @@ public class Wallet extends BaseTaggableObject
     public void addTransactionConfidenceEventListener(Executor executor, TransactionConfidenceEventListener listener) {
         // This is thread safe, so we don't need to take the lock.
         transactionConfidenceListeners.add(new ListenerRegistration<>(listener, executor));
-    }
-
-    /**
-     * Removes the given event listener object. Returns true if the listener was removed, false if that listener
-     * was never added.
-     * @deprecated use the fine-grain event listeners instead.
-     */
-    @Deprecated
-    public boolean removeEventListener(WalletEventListener listener) {
-        return removeChangeEventListener(listener) ||
-            removeCoinsReceivedEventListener(listener) ||
-            removeCoinsSentEventListener(listener) ||
-            removeKeyChainEventListener(listener) ||
-            removeReorganizeEventListener(listener) ||
-            removeTransactionConfidenceEventListener(listener);
     }
 
     /**
@@ -3221,15 +3171,6 @@ public class Wallet extends BaseTaggableObject
     }
 
     /**
-     * @deprecated Use {@link #toString(boolean, KeyParameter, boolean, boolean, AbstractBlockChain)} instead.
-     */
-    @Deprecated
-    public String toString(boolean includePrivateKeys, boolean includeTransactions, boolean includeExtensions,
-            @Nullable AbstractBlockChain chain) {
-        return toString(includePrivateKeys, includeTransactions, includeExtensions, chain);
-    }
-
-    /**
      * Formats the wallet as a human readable piece of text. Intended for debugging, the format is not meant to be
      * stable or human readable.
      * @param includePrivateKeys Whether raw private key data should be included.
@@ -3266,9 +3207,6 @@ public class Wallet extends BaseTaggableObject
             builder.append("\nKeys:\n");
             builder.append("Earliest creation time: ").append(Utils.dateTimeFormat(getEarliestKeyCreationTime() * 1000))
                     .append('\n');
-            final Date keyRotationTime = getKeyRotationTime();
-            if (keyRotationTime != null)
-                builder.append("Key rotation time:      ").append(Utils.dateTimeFormat(keyRotationTime)).append('\n');
             builder.append(keyChainGroup.toString(includePrivateKeys, aesKey));
 
             if (!watchedScripts.isEmpty()) {
@@ -3530,18 +3468,6 @@ public class Wallet extends BaseTaggableObject
         ESTIMATED_SPENDABLE,
         /** Same as AVAILABLE but only for outputs we have the private keys for and can sign ourselves. */
         AVAILABLE_SPENDABLE
-    }
-
-    /** @deprecated Use {@link #getBalance()} instead as including watched balances is now the default behaviour */
-    @Deprecated
-    public Coin getWatchedBalance() {
-        return getBalance();
-    }
-
-    /** @deprecated Use {@link #getBalance(CoinSelector)} instead as including watched balances is now the default behaviour */
-    @Deprecated
-    public Coin getWatchedBalance(CoinSelector selector) {
-        return getBalance(selector);
     }
 
     /**
@@ -4167,12 +4093,6 @@ public class Wallet extends BaseTaggableObject
      */
     public List<TransactionOutput> calculateAllSpendCandidates() {
         return calculateAllSpendCandidates(true, true);
-    }
-
-    /** @deprecated Use {@link #calculateAllSpendCandidates(boolean, boolean)} or the zero-parameter form instead. */
-    @Deprecated
-    public List<TransactionOutput> calculateAllSpendCandidates(boolean excludeImmatureCoinbases) {
-        return calculateAllSpendCandidates(excludeImmatureCoinbases, true);
     }
 
     /**
@@ -5021,255 +4941,5 @@ public class Wallet extends BaseTaggableObject
         return size;
     }
 
-    //endregion
-
-    /******************************************************************************************************************/
-
-    //region Wallet maintenance transactions
-
-    // Wallet maintenance transactions. These transactions may not be directly connected to a payment the user is
-    // making. They may be instead key rotation transactions for when old keys are suspected to be compromised,
-    // de/re-fragmentation transactions for when our output sizes are inappropriate or suboptimal, privacy transactions
-    // and so on. Because these transactions may require user intervention in some way (e.g. entering their password)
-    // the wallet application is expected to poll the Wallet class to get SendRequests. Ideally security systems like
-    // hardware wallets or risk analysis providers are programmed to auto-approve transactions that send from our own
-    // keys back to our own keys.
-
-    /**
-     * <p>Specifies that the given {@link TransactionBroadcaster}, typically a {@link PeerGroup}, should be used for
-     * sending transactions to the Bitcoin network by default. Some sendCoins methods let you specify a broadcaster
-     * explicitly, in that case, they don't use this broadcaster. If null is specified then the wallet won't attempt
-     * to broadcast transactions itself.</p>
-     *
-     * <p>You don't normally need to call this. A {@link PeerGroup} will automatically set itself as the wallets
-     * broadcaster when you use {@link PeerGroup#addWallet(Wallet)}. A wallet can use the broadcaster when you ask
-     * it to send money, but in future also at other times to implement various features that may require asynchronous
-     * re-organisation of the wallet contents on the block chain. For instance, in future the wallet may choose to
-     * optimise itself to reduce fees or improve privacy.</p>
-     */
-    public void setTransactionBroadcaster(@Nullable org.bitcoinj.core.TransactionBroadcaster broadcaster) {
-        Transaction[] toBroadcast = {};
-        lock.lock();
-        try {
-            if (vTransactionBroadcaster == broadcaster)
-                return;
-            vTransactionBroadcaster = broadcaster;
-            if (broadcaster == null)
-                return;
-            toBroadcast = pending.values().toArray(toBroadcast);
-        } finally {
-            lock.unlock();
-        }
-        // Now use it to upload any pending transactions we have that are marked as not being seen by any peers yet.
-        // Don't hold the wallet lock whilst doing this, so if the broadcaster accesses the wallet at some point there
-        // is no inversion.
-        for (Transaction tx : toBroadcast) {
-            ConfidenceType confidenceType = tx.getConfidence().getConfidenceType();
-            checkState(confidenceType == ConfidenceType.PENDING || confidenceType == ConfidenceType.IN_CONFLICT,
-                    "Expected PENDING or IN_CONFLICT, was %s.", confidenceType);
-            // Re-broadcast even if it's marked as already seen for two reasons
-            // 1) Old wallets may have transactions marked as broadcast by 1 peer when in reality the network
-            //    never saw it, due to bugs.
-            // 2) It can't really hurt.
-            log.info("New broadcaster so uploading waiting tx {}", tx.getHash());
-            broadcaster.broadcastTransaction(tx);
-        }
-    }
-
-    /**
-     * When a key rotation time is set, and money controlled by keys created before the given timestamp T will be
-     * automatically respent to any key that was created after T. This can be used to recover from a situation where
-     * a set of keys is believed to be compromised. Once the time is set transactions will be created and broadcast
-     * immediately. New coins that come in after calling this method will be automatically respent immediately. The
-     * rotation time is persisted to the wallet. You can stop key rotation by calling this method again with zero
-     * as the argument.
-     */
-    public void setKeyRotationTime(Date time) {
-        setKeyRotationTime(time.getTime() / 1000);
-    }
-
-    /**
-     * Returns the key rotation time, or null if unconfigured. See {@link #setKeyRotationTime(Date)} for a description
-     * of the field.
-     */
-    public @Nullable Date getKeyRotationTime() {
-        final long keyRotationTimestamp = vKeyRotationTimestamp;
-        if (keyRotationTimestamp != 0)
-            return new Date(keyRotationTimestamp * 1000);
-        else
-            return null;
-    }
-
-    /**
-     * <p>When a key rotation time is set, any money controlled by keys created before the given timestamp T will be
-     * automatically respent to any key that was created after T. This can be used to recover from a situation where
-     * a set of keys is believed to be compromised. You can stop key rotation by calling this method again with zero
-     * as the argument. Once set up, calling {@link #doMaintenance(org.spongycastle.crypto.params.KeyParameter, boolean)}
-     * will create and possibly send rotation transactions: but it won't be done automatically (because you might have
-     * to ask for the users password).</p>
-     *
-     * <p>The given time cannot be in the future.</p>
-     */
-    public void setKeyRotationTime(long unixTimeSeconds) {
-        checkArgument(unixTimeSeconds <= Utils.currentTimeSeconds(), "Given time (%s) cannot be in the future.",
-                Utils.dateTimeFormat(unixTimeSeconds * 1000));
-        vKeyRotationTimestamp = unixTimeSeconds;
-        saveNow();
-    }
-
-    /** Returns whether the keys creation time is before the key rotation time, if one was set. */
-    public boolean isKeyRotating(ECKey key) {
-        long time = vKeyRotationTimestamp;
-        return time != 0 && key.getCreationTimeSeconds() < time;
-    }
-
-    /** @deprecated Renamed to doMaintenance */
-    @Deprecated
-    public ListenableFuture<List<Transaction>> maybeDoMaintenance(@Nullable KeyParameter aesKey, boolean andSend) throws DeterministicUpgradeRequiresPassword {
-        return doMaintenance(aesKey, andSend);
-    }
-
-    /**
-     * A wallet app should call this from time to time in order to let the wallet craft and send transactions needed
-     * to re-organise coins internally. A good time to call this would be after receiving coins for an unencrypted
-     * wallet, or after sending money for an encrypted wallet. If you have an encrypted wallet and just want to know
-     * if some maintenance needs doing, call this method with andSend set to false and look at the returned list of
-     * transactions. Maintenance might also include internal changes that involve some processing or work but
-     * which don't require making transactions - these will happen automatically unless the password is required
-     * in which case an exception will be thrown.
-     *
-     * @param aesKey the users password, if any.
-     * @param signAndSend if true, send the transactions via the tx broadcaster and return them, if false just return them.
-     * @return A list of transactions that the wallet just made/will make for internal maintenance. Might be empty.
-     * @throws org.bitcoinj.wallet.DeterministicUpgradeRequiresPassword if key rotation requires the users password.
-     */
-    public ListenableFuture<List<Transaction>> doMaintenance(@Nullable KeyParameter aesKey, boolean signAndSend) throws DeterministicUpgradeRequiresPassword {
-        List<Transaction> txns;
-        lock.lock();
-        keyChainGroupLock.lock();
-        try {
-            txns = maybeRotateKeys(aesKey, signAndSend);
-            if (!signAndSend)
-                return Futures.immediateFuture(txns);
-        } finally {
-            keyChainGroupLock.unlock();
-            lock.unlock();
-        }
-        checkState(!lock.isHeldByCurrentThread());
-        ArrayList<ListenableFuture<Transaction>> futures = new ArrayList<>(txns.size());
-        TransactionBroadcaster broadcaster = vTransactionBroadcaster;
-        for (Transaction tx : txns) {
-            try {
-                final ListenableFuture<Transaction> future = broadcaster.broadcastTransaction(tx).future();
-                futures.add(future);
-                Futures.addCallback(future, new FutureCallback<Transaction>() {
-                    @Override
-                    public void onSuccess(Transaction transaction) {
-                        log.info("Successfully broadcast key rotation tx: {}", transaction);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        log.error("Failed to broadcast key rotation tx", throwable);
-                    }
-                });
-            } catch (Exception e) {
-                log.error("Failed to broadcast rekey tx", e);
-            }
-        }
-        return Futures.allAsList(futures);
-    }
-
-    // Checks to see if any coins are controlled by rotating keys and if so, spends them.
-    @GuardedBy("keyChainGroupLock")
-    private List<Transaction> maybeRotateKeys(@Nullable KeyParameter aesKey, boolean sign) throws DeterministicUpgradeRequiresPassword {
-        checkState(lock.isHeldByCurrentThread());
-        checkState(keyChainGroupLock.isHeldByCurrentThread());
-        List<Transaction> results = Lists.newLinkedList();
-        // TODO: Handle chain replays here.
-        final long keyRotationTimestamp = vKeyRotationTimestamp;
-        if (keyRotationTimestamp == 0) return results;  // Nothing to do.
-
-        // We might have to create a new HD hierarchy if the previous ones are now rotating.
-        boolean allChainsRotating = true;
-        for (DeterministicKeyChain chain : keyChainGroup.getDeterministicKeyChains()) {
-            if (chain.getEarliestKeyCreationTime() >= keyRotationTimestamp) {
-                allChainsRotating = false;
-                break;
-            }
-        }
-        if (allChainsRotating) {
-            try {
-                if (keyChainGroup.getImportedKeys().isEmpty()) {
-                    log.info("All HD chains are currently rotating and we have no random keys, creating fresh HD chain ...");
-                    keyChainGroup.createAndActivateNewHDChain();
-                } else {
-                    log.info("All HD chains are currently rotating, attempting to create a new one from the next oldest non-rotating key material ...");
-                    keyChainGroup.upgradeToDeterministic(keyRotationTimestamp, aesKey);
-                    log.info(" ... upgraded to HD again, based on next best oldest key.");
-                }
-            } catch (AllRandomKeysRotating rotating) {
-                log.info(" ... no non-rotating random keys available, generating entirely new HD tree: backup required after this.");
-                keyChainGroup.createAndActivateNewHDChain();
-            }
-            saveNow();
-        }
-
-        // Because transactions are size limited, we might not be able to re-key the entire wallet in one go. So
-        // loop around here until we no longer produce transactions with the max number of inputs. That means we're
-        // fully done, at least for now (we may still get more transactions later and this method will be reinvoked).
-        Transaction tx;
-        do {
-            tx = rekeyOneBatch(keyRotationTimestamp, aesKey, results, sign);
-            if (tx != null) results.add(tx);
-        } while (tx != null && tx.getInputs().size() == KeyTimeCoinSelector.MAX_SIMULTANEOUS_INPUTS);
-        return results;
-    }
-
-    @Nullable
-    private Transaction rekeyOneBatch(long timeSecs, @Nullable KeyParameter aesKey, List<Transaction> others, boolean sign) {
-        lock.lock();
-        try {
-            // Build the transaction using some custom logic for our special needs. Last parameter to
-            // KeyTimeCoinSelector is whether to ignore pending transactions or not.
-            //
-            // We ignore pending outputs because trying to rotate these is basically racing an attacker, and
-            // we're quite likely to lose and create stuck double spends. Also, some users who have 0.9 wallets
-            // have already got stuck double spends in their wallet due to the Bloom-filtering block reordering
-            // bug that was fixed in 0.10, thus, making a re-key transaction depend on those would cause it to
-            // never confirm at all.
-            CoinSelector keyTimeSelector = new KeyTimeCoinSelector(this, timeSecs, true);
-            FilteringCoinSelector selector = new FilteringCoinSelector(keyTimeSelector);
-            for (Transaction other : others)
-                selector.excludeOutputsSpentBy(other);
-            // TODO: Make this use the standard SendRequest.
-            CoinSelection toMove = selector.select(Coin.ZERO, calculateAllSpendCandidates());
-            if (toMove.valueGathered.equals(Coin.ZERO)) return null;  // Nothing to do.
-            maybeUpgradeToHD(aesKey);
-            Transaction rekeyTx = new Transaction(params);
-            for (TransactionOutput output : toMove.gathered) {
-                rekeyTx.addInput(output);
-            }
-            // When not signing, don't waste addresses.
-            rekeyTx.addOutput(toMove.valueGathered, sign ? freshReceiveAddress() : currentReceiveAddress());
-            if (!adjustOutputDownwardsForFee(rekeyTx, toMove, Transaction.DEFAULT_TX_FEE, true)) {
-                log.error("Failed to adjust rekey tx for fees.");
-                return null;
-            }
-            rekeyTx.getConfidence().setSource(TransactionConfidence.Source.SELF);
-            rekeyTx.setPurpose(Transaction.Purpose.KEY_ROTATION);
-            SendRequest req = SendRequest.forTx(rekeyTx);
-            req.aesKey = aesKey;
-            if (sign)
-                signTransaction(req);
-            // KeyTimeCoinSelector should never select enough inputs to push us oversize.
-            checkState(rekeyTx.unsafeBitcoinSerialize().length < Transaction.MAX_STANDARD_TX_SIZE);
-            return rekeyTx;
-        } catch (VerificationException e) {
-            throw new RuntimeException(e);  // Cannot happen.
-        } finally {
-            lock.unlock();
-        }
-    }
     //endregion
 }

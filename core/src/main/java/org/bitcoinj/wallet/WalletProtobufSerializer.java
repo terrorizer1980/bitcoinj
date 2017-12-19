@@ -211,11 +211,6 @@ public class WalletProtobufSerializer {
             }
         }
 
-        if (wallet.getKeyRotationTime() != null) {
-            long timeSecs = wallet.getKeyRotationTime().getTime() / 1000;
-            walletBuilder.setKeyRotationTime(timeSecs);
-        }
-
         populateExtensions(wallet, walletBuilder);
 
         for (Map.Entry<String, ByteString> entry : wallet.getTags().entrySet()) {
@@ -543,10 +538,6 @@ public class WalletProtobufSerializer {
             }
             // Will default to zero if not present.
             wallet.setLastBlockSeenTimeSecs(walletProto.getLastSeenBlockTimeSecs());
-
-            if (walletProto.hasKeyRotationTime()) {
-                wallet.setKeyRotationTime(new Date(walletProto.getKeyRotationTime() * 1000));
-            }
         }
 
         loadExtensions(wallet, extensions != null ? extensions : new WalletExtension[0], walletProto);

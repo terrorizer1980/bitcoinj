@@ -61,7 +61,6 @@ public class MockTransactionBroadcaster implements TransactionBroadcaster {
         lock.lock();
         try {
             this.wallet = wallet;
-            wallet.setTransactionBroadcaster(this);
             wallet.getPendingTransactions();
         } finally {
             lock.unlock();
