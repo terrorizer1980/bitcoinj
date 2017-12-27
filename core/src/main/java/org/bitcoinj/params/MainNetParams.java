@@ -18,7 +18,6 @@
 package org.bitcoinj.params;
 
 import org.bitcoinj.core.*;
-import org.bitcoinj.net.discovery.*;
 
 import java.net.*;
 
@@ -80,13 +79,6 @@ public class MainNetParams extends AbstractBitcoinNetParams {
                 "seed.bitcoin.jonasschnelli.ch",// Jonas Schnelli
                 "bitcoin.bloqseeds.net",        // Bloq
                 "seed.ob1.io",                  // OpenBazaar
-        };
-        httpSeeds = new HttpDiscovery.Details[] {
-                // Andreas Schildbach
-                new HttpDiscovery.Details(
-                        ECKey.fromPublicOnly(Utils.HEX.decode("0238746c59d46d5408bf8b1d0af5740fe1a6e1703fcb56b2953f0b965c740d256f")),
-                        URI.create("http://httpseed.bitcoin.schildbach.de/peers")
-                )
         };
 
         addrSeeds = new int[] {

@@ -17,12 +17,10 @@
 package org.bitcoinj.core;
 
 import org.bitcoinj.script.Script;
-import org.bitcoinj.wallet.WalletTransaction;
 
 import java.util.Map;
 
 /**
- * This interface is used to abstract the {@link org.bitcoinj.wallet.Wallet} and the {@link org.bitcoinj.core.Transaction}
  */
 public interface TransactionBag {
     /** Returns true if this wallet contains a public key which hashes to the given hash. */
@@ -38,5 +36,4 @@ public interface TransactionBag {
     boolean isPayToScriptHashMine(byte[] payToScriptHash);
 
     /** Returns transactions from a specific pool. */
-    Map<Sha256Hash, Transaction> getTransactionPool(WalletTransaction.Pool pool);
 }

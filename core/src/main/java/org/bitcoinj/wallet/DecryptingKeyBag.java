@@ -27,27 +27,19 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A DecryptingKeyBag filters a pre-existing key bag, decrypting keys as they are requested using the provided
- * AES key. If the keys are encrypted and no AES key provided, {@link org.bitcoinj.core.ECKey.KeyIsEncryptedException}
- * will be thrown.
+ * A DecryptingKeyBag filters a pre-existing key bag.
  */
 public class DecryptingKeyBag implements KeyBag {
     protected final KeyBag target;
-    protected final KeyParameter aesKey;
 
-    public DecryptingKeyBag(KeyBag target, @Nullable KeyParameter aesKey) {
+    public DecryptingKeyBag(KeyBag target) {
         this.target = checkNotNull(target);
-        this.aesKey = aesKey;
     }
 
     @Nullable
     private ECKey maybeDecrypt(ECKey key) {
-        if (key == null)
+        if (key == null) {
             return null;
-        else if (key.isEncrypted()) {
-            if (aesKey == null)
-                throw new ECKey.KeyIsEncryptedException();
-            return key.decrypt(aesKey);
         } else {
             return key;
         }

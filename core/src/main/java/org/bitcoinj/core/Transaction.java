@@ -27,8 +27,6 @@ import org.bitcoinj.script.ScriptException;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.signers.TransactionSigner;
 import org.bitcoinj.utils.ExchangeRate;
-import org.bitcoinj.wallet.Wallet;
-import org.bitcoinj.wallet.WalletTransaction.Pool;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Ints;
@@ -361,35 +359,6 @@ public class Transaction extends ChildMessage {
     }
 
     /**
-     * Calculates the sum of the inputs that are spending coins with keys in the wallet. This requires the
-     * transactions sending coins to those keys to be in the wallet. This method will not attempt to download the
-     * blocks containing the input transactions if the key is in the wallet but the transactions are not.
-     *
-     * @return sum of the inputs that are spending coins with keys in the wallet
-     */
-    public Coin getValueSentFromMe(TransactionBag wallet) throws ScriptException {
-        // This is tested in WalletTest.
-        Coin v = Coin.ZERO;
-        for (TransactionInput input : inputs) {
-            // This input is taking value from a transaction in our wallet. To discover the value,
-            // we must find the connected transaction.
-            TransactionOutput connected = input.getConnectedOutput(wallet.getTransactionPool(Pool.UNSPENT));
-            if (connected == null)
-                connected = input.getConnectedOutput(wallet.getTransactionPool(Pool.SPENT));
-            if (connected == null)
-                connected = input.getConnectedOutput(wallet.getTransactionPool(Pool.PENDING));
-            if (connected == null)
-                continue;
-            // The connected output may be the change to the sender of a previous input sent to this wallet. In this
-            // case we ignore it.
-            if (!connected.isMineOrWatched(wallet))
-                continue;
-            v = v.add(connected.getValue());
-        }
-        return v;
-    }
-
-    /**
      * Gets the sum of the outputs of the transaction. If the outputs are less than the inputs, it does not count the fee.
      * @return the sum of the outputs regardless of who owns them.
      */
@@ -405,22 +374,6 @@ public class Transaction extends ChildMessage {
 
     @Nullable private Coin cachedValue;
     @Nullable private TransactionBag cachedForBag;
-
-    /**
-     * Returns the difference of {@link Transaction#getValueSentToMe(TransactionBag)} and {@link Transaction#getValueSentFromMe(TransactionBag)}.
-     */
-    public Coin getValue(TransactionBag wallet) throws ScriptException {
-        // FIXME: TEMP PERF HACK FOR ANDROID - this crap can go away once we have a real payments API.
-        boolean isAndroid = Utils.isAndroidRuntime();
-        if (isAndroid && cachedValue != null && cachedForBag == wallet)
-            return cachedValue;
-        Coin result = getValueSentToMe(wallet).subtract(getValueSentFromMe(wallet));
-        if (isAndroid) {
-            cachedValue = result;
-            cachedForBag = wallet;
-        }
-        return result;
-    }
 
     /**
      * The transaction fee is the difference of the value of all inputs and the value of all outputs. Currently, the fee
@@ -642,16 +595,11 @@ public class Transaction extends ChildMessage {
         return getConfidence().getDepthInBlocks() >= params.getSpendableCoinbaseDepth();
     }
 
-    @Override
-    public String toString() {
-        return toString(null);
-    }
-
     /**
      * A human readable version of the transaction useful for debugging. The format is not guaranteed to be stable.
-     * @param chain If provided, will be used to estimate lock times (if set). Can be null.
      */
-    public String toString(@Nullable AbstractBlockChain chain) {
+    @Override
+    public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("  ").append(getHashAsString()).append('\n');
         if (updatedAt != null)
@@ -662,10 +610,6 @@ public class Transaction extends ChildMessage {
             s.append("  time locked until ");
             if (lockTime < LOCKTIME_THRESHOLD) {
                 s.append("block ").append(lockTime);
-                if (chain != null) {
-                    s.append(" (estimated to be reached at ")
-                            .append(Utils.dateTimeFormat(chain.estimateBlockTime((int) lockTime))).append(')');
-                }
             } else {
                 s.append(Utils.dateTimeFormat(lockTime * 1000));
             }
@@ -1006,7 +950,6 @@ public class Transaction extends ChildMessage {
      *
      * @param inputIndex Which input to calculate the signature for, as an index.
      * @param key The private key used to calculate the signature.
-     * @param aesKey The AES key to use for decryption of the private key. If null then no decryption is required.
      * @param redeemScript Byte-exact contents of the scriptPubKey that is being satisified, or the P2SH redeem script.
      * @param hashType Signing mode, see the enum for documentation.
      * @param anyoneCanPay Signing mode, see the SigHash enum for documentation.
@@ -1015,25 +958,11 @@ public class Transaction extends ChildMessage {
     public TransactionSignature calculateSignature(
         int inputIndex,
         ECKey key,
-        @Nullable KeyParameter aesKey,
         byte[] redeemScript,
         SigHash hashType,
         boolean anyoneCanPay, boolean forkId) {
         Sha256Hash hash = hashForSignature(inputIndex, redeemScript, hashType, anyoneCanPay);
-        return new TransactionSignature(key.sign(hash, aesKey), hashType, anyoneCanPay);
-    }
-
-    public TransactionSignature calculateWitnessSignature(
-        int inputIndex,
-        ECKey key,
-        @Nullable KeyParameter aesKey,
-        byte[] redeemScript,
-        Coin value,
-        SigHash hashType,
-        boolean anyoneCanPay) {
-        Sha256Hash hash = hashForSignatureWitness(inputIndex, redeemScript, value, hashType,
-            anyoneCanPay);
-        return new TransactionSignature(key.sign(hash, aesKey), hashType, anyoneCanPay, true);
+        return new TransactionSignature(key.sign(hash), hashType, anyoneCanPay);
     }
 
     /**
@@ -1058,26 +987,13 @@ public class Transaction extends ChildMessage {
         boolean anyoneCanPay) {
         Sha256Hash hash = hashForSignature(inputIndex, redeemScript.getProgram(), hashType,
             anyoneCanPay);
-        return new TransactionSignature(key.sign(hash, aesKey), hashType, anyoneCanPay, false);
+        return new TransactionSignature(key.sign(hash), hashType, anyoneCanPay, false);
     }
 
-    public TransactionSignature calculateWitnessSignature(
-        int inputIndex,
-        ECKey key,
-        @Nullable KeyParameter aesKey,
-        Script redeemScript,
-        Coin value,
-        SigHash hashType,
-        boolean anyoneCanPay) {
-        Sha256Hash hash = hashForSignatureWitness(inputIndex, redeemScript.getProgram(), value,
-            hashType, anyoneCanPay);
-        return new TransactionSignature(key.sign(hash, aesKey), hashType, anyoneCanPay, true);
-    }
     /**
      * <p>Calculates a signature hash, that is, a hash of a simplified form of the transaction. How exactly the transaction
      * is simplified is specified by the type and anyoneCanPay parameters.</p>
      *
-     * <p>This is a low level API and when using the regular {@link Wallet} class you don't have to call this yourself.
      * When working with more complex transaction types and contracts, it can be necessary. When signing a P2SH output
      * the redeemScript should be the script encoded into the scriptSig field, for normal transactions, it's the
      * scriptPubKey of the output you're signing for.</p>
@@ -1097,7 +1013,6 @@ public class Transaction extends ChildMessage {
      * <p>Calculates a signature hash, that is, a hash of a simplified form of the transaction. How exactly the transaction
      * is simplified is specified by the type and anyoneCanPay parameters.</p>
      *
-     * <p>This is a low level API and when using the regular {@link Wallet} class you don't have to call this yourself.
      * When working with more complex transaction types and contracts, it can be necessary. When signing a P2SH output
      * the redeemScript should be the script encoded into the scriptSig field, for normal transactions, it's the
      * scriptPubKey of the output you're signing for.</p>
@@ -1208,8 +1123,7 @@ public class Transaction extends ChildMessage {
      * exactly the transaction is simplified is specified by the type and anyoneCanPay
      * parameters.</p>
      *
-     * <p>This is a low level API and when using the regular {@link Wallet} class you don't have to
-     * call this yourself. When working with more complex transaction types and contracts, it can be
+     * When working with more complex transaction types and contracts, it can be
      * necessary. When signing a Witness output the scriptCode should be the script encoded into the
      * scriptSig field, for normal transactions, it's the scriptPubKey of the output you're signing
      * for. (See BIP143: https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki)</p>
@@ -1590,17 +1504,6 @@ public class Transaction extends ChildMessage {
     public boolean isFinal(int height, long blockTimeSeconds) {
         long time = getLockTime();
         return time < (time < LOCKTIME_THRESHOLD ? height : blockTimeSeconds) || !isTimeLocked();
-    }
-
-    /**
-     * Returns either the lock time as a date, if it was specified in seconds, or an estimate based on the time in
-     * the current head block if it was specified as a block time.
-     */
-    public Date estimateLockTime(AbstractBlockChain chain) {
-        if (lockTime < LOCKTIME_THRESHOLD)
-            return chain.estimateBlockTime((int)getLockTime());
-        else
-            return new Date(getLockTime()*1000);
     }
 
     /**

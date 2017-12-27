@@ -77,7 +77,6 @@ public class MainNetParamsBCH extends AbstractBitcoinNetParams {
             "seed.deadalnix.me",
             "seeder.criptolayer.net"
         };
-        httpSeeds = null;
 
         addrSeeds = null;
     }

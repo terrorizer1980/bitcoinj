@@ -39,15 +39,13 @@ import static com.google.common.base.Preconditions.checkState;
  * {@link DeterministicKeyChain}. The purpose of this wrapper is to simplify the encryption
  * code.
  */
-public class DeterministicSeed implements EncryptableItem {
+public class DeterministicSeed {
     // It would take more than 10^12 years to brute-force a 128 bit seed using $1B worth of computing equipment.
     public static final int DEFAULT_SEED_ENTROPY_BITS = 128;
     public static final int MAX_SEED_ENTROPY_BITS = 512;
 
     @Nullable private final byte[] seed;
     @Nullable private final List<String> mnemonicCode; // only one of mnemonicCode/encryptedMnemonicCode will be set
-    @Nullable private final EncryptedData encryptedMnemonicCode;
-    @Nullable private EncryptedData encryptedSeed;
     private long creationTimeSeconds;
 
     public DeterministicSeed(String mnemonicCode, byte[] seed, String passphrase, long creationTimeSeconds) throws UnreadableWalletException {
@@ -57,15 +55,6 @@ public class DeterministicSeed implements EncryptableItem {
     public DeterministicSeed(byte[] seed, List<String> mnemonic, long creationTimeSeconds) {
         this.seed = checkNotNull(seed);
         this.mnemonicCode = checkNotNull(mnemonic);
-        this.encryptedMnemonicCode = null;
-        this.creationTimeSeconds = creationTimeSeconds;
-    }
-
-    public DeterministicSeed(EncryptedData encryptedMnemonic, @Nullable EncryptedData encryptedSeed, long creationTimeSeconds) {
-        this.seed = null;
-        this.mnemonicCode = null;
-        this.encryptedMnemonicCode = checkNotNull(encryptedMnemonic);
-        this.encryptedSeed = encryptedSeed;
         this.creationTimeSeconds = creationTimeSeconds;
     }
 
@@ -112,7 +101,6 @@ public class DeterministicSeed implements EncryptableItem {
             throw new RuntimeException(e);
         }
         this.seed = MnemonicCode.toSeed(mnemonicCode, passphrase);
-        this.encryptedMnemonicCode = null;
         this.creationTimeSeconds = creationTimeSeconds;
     }
 
@@ -125,16 +113,8 @@ public class DeterministicSeed implements EncryptableItem {
     }
 
     @Override
-    public boolean isEncrypted() {
-        checkState(mnemonicCode != null || encryptedMnemonicCode != null);
-        return encryptedMnemonicCode != null;
-    }
-
-    @Override
     public String toString() {
-        return isEncrypted()
-            ? "DeterministicSeed [encrypted]"
-            : "DeterministicSeed " + toHexString() + " " + Utils.SPACE_JOINER.join(mnemonicCode);
+        return "DeterministicSeed " + toHexString() + " " + Utils.SPACE_JOINER.join(mnemonicCode);
     }
 
     /** Returns the seed as hex or null if encrypted. */
@@ -144,7 +124,6 @@ public class DeterministicSeed implements EncryptableItem {
     }
 
     @Nullable
-    @Override
     public byte[] getSecretBytes() {
         return getMnemonicAsBytes();
     }
@@ -154,23 +133,6 @@ public class DeterministicSeed implements EncryptableItem {
         return seed;
     }
 
-    @Nullable
-    @Override
-    public EncryptedData getEncryptedData() {
-        return encryptedMnemonicCode;
-    }
-
-    @Override
-    public Protos.Wallet.EncryptionType getEncryptionType() {
-        return Protos.Wallet.EncryptionType.ENCRYPTED_SCRYPT_AES;
-    }
-
-    @Nullable
-    public EncryptedData getEncryptedSeedData() {
-        return encryptedSeed;
-    }
-
-    @Override
     public long getCreationTimeSeconds() {
         return creationTimeSeconds;
     }
@@ -179,24 +141,8 @@ public class DeterministicSeed implements EncryptableItem {
         this.creationTimeSeconds = creationTimeSeconds;
     }
 
-    public DeterministicSeed encrypt(KeyCrypter keyCrypter, KeyParameter aesKey) {
-        checkState(encryptedMnemonicCode == null, "Trying to encrypt seed twice");
-        checkState(mnemonicCode != null, "Mnemonic missing so cannot encrypt");
-        EncryptedData encryptedMnemonic = keyCrypter.encrypt(getMnemonicAsBytes(), aesKey);
-        EncryptedData encryptedSeed = keyCrypter.encrypt(seed, aesKey);
-        return new DeterministicSeed(encryptedMnemonic, encryptedSeed, creationTimeSeconds);
-    }
-
     private byte[] getMnemonicAsBytes() {
         return Utils.SPACE_JOINER.join(mnemonicCode).getBytes(Charsets.UTF_8);
-    }
-
-    public DeterministicSeed decrypt(KeyCrypter crypter, String passphrase, KeyParameter aesKey) {
-        checkState(isEncrypted());
-        checkNotNull(encryptedMnemonicCode);
-        List<String> mnemonic = decodeMnemonicCode(crypter.decrypt(encryptedMnemonicCode, aesKey));
-        byte[] seed = encryptedSeed == null ? null : crypter.decrypt(encryptedSeed, aesKey);
-        return new DeterministicSeed(mnemonic, seed, passphrase, creationTimeSeconds);
     }
 
     @Override
@@ -205,13 +151,12 @@ public class DeterministicSeed implements EncryptableItem {
         if (o == null || getClass() != o.getClass()) return false;
         DeterministicSeed other = (DeterministicSeed) o;
         return creationTimeSeconds == other.creationTimeSeconds
-            && Objects.equal(encryptedMnemonicCode, other.encryptedMnemonicCode)
             && Objects.equal(mnemonicCode, other.mnemonicCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(creationTimeSeconds, encryptedMnemonicCode, mnemonicCode);
+        return Objects.hashCode(creationTimeSeconds, mnemonicCode);
     }
 
     /**

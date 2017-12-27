@@ -337,7 +337,6 @@ public class MemoryFullPrunedBlockStore implements FullPrunedBlockStore {
         if (this.chainHead.getHeight() < chainHead.getHeight())
             setChainHead(chainHead);
         // Potential leak here if not all blocks get setChainHead'd
-        // Though the FullPrunedBlockStore allows for this, the current AbstractBlockChain will not do it.
         fullBlockMap.removeByMultiKey(chainHead.getHeight() - fullStoreDepth);
     }
     

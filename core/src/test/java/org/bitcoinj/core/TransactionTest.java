@@ -112,22 +112,6 @@ public class TransactionTest {
     }
 
     @Test
-    public void testEstimatedLockTime_WhenParameterSignifiesBlockHeight() {
-        int TEST_LOCK_TIME = 20;
-        Date now = Calendar.getInstance().getTime();
-
-        BlockChain mockBlockChain = createMock(BlockChain.class);
-        EasyMock.expect(mockBlockChain.estimateBlockTime(TEST_LOCK_TIME)).andReturn(now);
-
-        Transaction tx = FakeTxBuilder.createFakeTx(PARAMS);
-        tx.setLockTime(TEST_LOCK_TIME); // less than five hundred million
-
-        replay(mockBlockChain);
-
-        assertEquals(tx.estimateLockTime(mockBlockChain), now);
-    }
-
-    @Test
     public void testOptimalEncodingMessageSize() {
         Transaction tx = new Transaction(PARAMS);
 
@@ -267,30 +251,6 @@ public class TransactionTest {
             invalidScriptSig.correctlySpends(tx, 0, outputScript, Script.ALL_VERIFY_FLAGS);
             fail("Invalid sig passed");
         } catch (ScriptException e) { }
-    }
-
-    @Test
-    public void testToStringWhenLockTimeIsSpecifiedInBlockHeight() {
-        Transaction tx = FakeTxBuilder.createFakeTx(PARAMS);
-        TransactionInput input = tx.getInput(0);
-        input.setSequenceNumber(42);
-
-        int TEST_LOCK_TIME = 20;
-        tx.setLockTime(TEST_LOCK_TIME);
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(2085, 10, 4, 17, 53, 21);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        BlockChain mockBlockChain = createMock(BlockChain.class);
-        EasyMock.expect(mockBlockChain.estimateBlockTime(TEST_LOCK_TIME)).andReturn(cal.getTime());
-
-        replay(mockBlockChain);
-
-        String str = tx.toString(mockBlockChain);
-
-        assertEquals(str.contains("block " + TEST_LOCK_TIME), true);
-        assertEquals(str.contains("estimated to be reached at"), true);
     }
 
     @Test
