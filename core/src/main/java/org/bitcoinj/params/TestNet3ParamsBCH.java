@@ -33,10 +33,10 @@ import org.bitcoinj.store.BlockStoreException;
  * Parameters for the testnet, a separate public instance of Bitcoin that has relaxed rules suitable for development
  * and testing of applications and new Bitcoin versions.
  */
-public class TestNet3ParamsBCH extends AbstractBitcoinNetParams {
+public class TestNet3ParamsBCH extends AbstractBitcoinCashNetParams {
     public TestNet3ParamsBCH() {
-        super(AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME);
-        id = ID_TESTNET;
+        super();
+        id = ID_BCH_TESTNET;
         // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
         packetMagic = 0xf4e5f3f4L;
         interval = INTERVAL;

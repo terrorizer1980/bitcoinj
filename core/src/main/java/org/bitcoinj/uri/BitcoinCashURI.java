@@ -33,7 +33,7 @@ import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.AbstractBitcoinNetParams;
+import org.bitcoinj.params.AbstractBitcoinCashNetParams;
 
 /**
  * <p>Provides a standard implementation of a Bitcoin Cash URI with support for the following:</p>
@@ -114,7 +114,7 @@ public class BitcoinCashURI {
         checkNotNull(input);
 
         String scheme = null == params
-            ? AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME
+            ? AbstractBitcoinCashNetParams.BITCOIN_SCHEME
             : params.getUriScheme();
 
         // Attempt to form the URI (fail fast syntax checking to official standards).

@@ -18,17 +18,15 @@
 
 package org.bitcoinj.core;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
+import javax.annotation.Nullable;
 import org.bitcoinj.params.Networks;
 import org.bitcoinj.script.Script;
-
-import javax.annotation.Nullable;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * <p>A Bitcoin address looks like 1MsScoe2fTJoq4ZPdQgqyhgWeoNamYPevy and is derived from an elliptic curve public key
@@ -90,7 +88,11 @@ public class Address extends VersionedChecksummedBytes {
      *             if the given address is valid but for a different chain (eg testnet vs mainnet)
      */
     public static Address fromBase58(@Nullable NetworkParameters params, String base58) throws AddressFormatException {
-        return new Address(params, base58);
+        return new Address(params, base58, true);
+    }
+
+    public static Address fromBech32(@Nullable NetworkParameters params, String bech32) throws AddressFormatException {
+        return new Address(params, bech32, false);
     }
 
     /**
@@ -106,8 +108,8 @@ public class Address extends VersionedChecksummedBytes {
 
     /** @deprecated Use {@link #fromBase58(NetworkParameters, String)} */
     @Deprecated
-    public Address(@Nullable NetworkParameters params, String address) throws AddressFormatException {
-        super(address);
+    public Address(@Nullable NetworkParameters params, String address, boolean isBase58) throws AddressFormatException {
+        super(address, params, isBase58);
         if (params != null) {
             if (!isAcceptableVersion(params, version)) {
                 throw new WrongNetworkException(version, params.getAcceptableAddressCodes());
@@ -199,5 +201,9 @@ public class Address extends VersionedChecksummedBytes {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         params = NetworkParameters.fromID(in.readUTF());
+    }
+
+    public String toBech32() {
+        return toBech32(params);
     }
 }

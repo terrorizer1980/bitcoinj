@@ -31,7 +31,7 @@ public class UnitTestParams extends AbstractBitcoinNetParams {
 
     public UnitTestParams() {
         super();
-        id = ID_UNITTESTNET;
+        id = ID_BTC_UNITTESTNET;
         packetMagic = 0x0b110907;
         addressHeader = 111;
         p2shHeader = 196;

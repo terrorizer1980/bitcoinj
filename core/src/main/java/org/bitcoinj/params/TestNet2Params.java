@@ -29,18 +29,13 @@ public class TestNet2Params extends AbstractBitcoinNetParams {
     public static final int TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED = 75;
     public static final int TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 51;
 
-    public TestNet2Params(String uriScheme) {
-        super(uriScheme);
-        init();
-    }
-
     public TestNet2Params() {
         super();
         init();
     }
 
     private void init() {
-        id = ID_TESTNET;
+        id = ID_BTC_TESTNET;
         packetMagic = 0xfabfb5daL;
         port = 18333;
         addressHeader = 111;

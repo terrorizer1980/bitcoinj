@@ -19,9 +19,10 @@ package org.bitcoinj.params;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Stopwatch;
 import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
-
+import org.bitcoinj.core.BitcoinSerializer;
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
@@ -29,35 +30,31 @@ import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Utils;
-import org.bitcoinj.utils.MonetaryFormat;
 import org.bitcoinj.core.VerificationException;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
+import org.bitcoinj.utils.MonetaryFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Stopwatch;
-
-import org.bitcoinj.core.BitcoinSerializer;
-
 /**
- * Parameters for Bitcoin-like networks.
+ * Parameters for Bitcoincash-like networks.
  */
-public abstract class AbstractBitcoinNetParams extends NetworkParameters {
+public abstract class AbstractBitcoinCashNetParams extends NetworkParameters {
 
     /**
-     * Scheme part for Bitcoin URIs.
+     * Scheme part for Bitcoin Cash URIs.
      */
-    public static final String BITCOIN_SCHEME = "bitcoin";
+    public static final String BITCOIN_SCHEME = "bitcoincash";
     private String uriScheme = BITCOIN_SCHEME;
     public static final int REWARD_HALVING_INTERVAL = 210000;
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractBitcoinNetParams.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractBitcoinCashNetParams.class);
 
     /**
      * Constructor which defaults to bitcoin uri scheme.
      */
-    public AbstractBitcoinNetParams() {
+    public AbstractBitcoinCashNetParams() {
         super();
     }
 

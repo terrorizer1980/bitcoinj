@@ -25,13 +25,13 @@ import org.bitcoinj.core.Utils;
 /**
  * Parameters for the main production network on which people trade goods and services.
  */
-public class MainNetParamsBCH extends AbstractBitcoinNetParams {
+public class MainNetParamsBCH extends AbstractBitcoinCashNetParams {
     public static final int MAINNET_MAJORITY_WINDOW = 1000;
     public static final int MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED = 950;
     public static final int MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 750;
 
     public MainNetParamsBCH() {
-        super(AbstractBitcoinNetParams.BITCOIN_CASH_SCHEME);
+        super();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
         maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
@@ -51,7 +51,7 @@ public class MainNetParamsBCH extends AbstractBitcoinNetParams {
         genesisBlock.setDifficultyTarget(0x1d00ffffL);
         genesisBlock.setTime(1231006505L);
         genesisBlock.setNonce(2083236893);
-        id = ID_MAINNET;
+        id = ID_BCH_MAINNET;
         subsidyDecreaseBlockCount = 210000;
         spendableCoinbaseDepth = 100;
         String genesisHash = genesisBlock.getHashAsString();

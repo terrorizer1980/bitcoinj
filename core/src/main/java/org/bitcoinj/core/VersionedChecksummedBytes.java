@@ -24,6 +24,7 @@ import java.util.Arrays;
 import com.google.common.base.Objects;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.UnsignedBytes;
+import org.bitcoinj.core.SegwitAddress.SegwitAddressParts;
 
 /**
  * <p>In Bitcoin the following format is often used to represent some type of key:</p>
@@ -51,6 +52,21 @@ public class VersionedChecksummedBytes implements Serializable, Cloneable, Compa
         this.bytes = bytes;
     }
 
+    protected VersionedChecksummedBytes(String encoded, NetworkParameters params, boolean isBase58) {
+
+        if (isBase58) {
+            byte[] versionAndDataBytes = Base58.decodeChecked(encoded);
+            byte versionByte = versionAndDataBytes[0];
+            version = versionByte & 0xFF;
+            bytes = new byte[versionAndDataBytes.length - 1];
+            System.arraycopy(versionAndDataBytes, 1, bytes, 0, versionAndDataBytes.length - 1);
+        } else {
+            SegwitAddressParts versionAndDataBytes = SegwitAddress.decode(params, encoded);
+            bytes = versionAndDataBytes.getProgram();
+            version = versionAndDataBytes.getVersion();
+        }
+    }
+
     /**
      * Returns the base-58 encoded String representation of this
      * object, including version and checksum bytes.
@@ -64,6 +80,10 @@ public class VersionedChecksummedBytes implements Serializable, Cloneable, Compa
         byte[] checksum = Sha256Hash.hashTwice(addressBytes, 0, bytes.length + 1);
         System.arraycopy(checksum, 0, addressBytes, bytes.length + 1, 4);
         return Base58.encode(addressBytes);
+    }
+
+    public String toBech32(NetworkParameters params) {
+        return SegwitAddress.encode(params, (byte) version, bytes);
     }
 
     @Override

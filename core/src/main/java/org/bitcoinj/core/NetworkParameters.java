@@ -51,13 +51,18 @@ public abstract class NetworkParameters {
     public static final byte[] SATOSHI_KEY = Utils.HEX.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
 
     /** The string returned by getId() for the main, production network where people trade things. */
-    public static final String ID_MAINNET = "org.bitcoin.production";
+    public static final String ID_BTC_MAINNET = "org.bitcoin.production";
     /** The string returned by getId() for the testnet. */
-    public static final String ID_TESTNET = "org.bitcoin.test";
+    public static final String ID_BTC_TESTNET = "org.bitcoin.test";
     /** The string returned by getId() for regtest mode. */
-    public static final String ID_REGTEST = "org.bitcoin.regtest";
+    public static final String ID_BTC_REGTEST = "org.bitcoin.regtest";
     /** Unit test network. */
-    public static final String ID_UNITTESTNET = "org.bitcoinj.unittest";
+    public static final String ID_BTC_UNITTESTNET = "org.bitcoinj.unittest";
+
+    /** The string returned by getId() for the bitcoin cash testnet. */
+    public static final String ID_BCH_MAINNET = "org.bitcoincash.production";
+    /** The string returned by getId() for the bitcoin cash testnet. */
+    public static final String ID_BCH_TESTNET = "org.bitcoincash.test";
 
     /** The string used by the payment protocol to represent the main net. */
     public static final String PAYMENT_PROTOCOL_ID_MAINNET = "main";
@@ -66,6 +71,9 @@ public abstract class NetworkParameters {
     /** The string used by the payment protocol to represent unit testing (note that this is non-standard). */
     public static final String PAYMENT_PROTOCOL_ID_UNIT_TESTS = "unittest";
     public static final String PAYMENT_PROTOCOL_ID_REGTEST = "regtest";
+
+    public static final byte SEPARATOR_COLON = 0x3a; // :
+    public static final byte SEPARATOR_1 = 0x31; // 1
 
     // TODO: Seed nodes should be here as well.
 
@@ -214,14 +222,18 @@ public abstract class NetworkParameters {
     /** Returns the network parameters for the given string ID or NULL if not recognized. */
     @Nullable
     public static NetworkParameters fromID(String id) {
-        if (id.equals(ID_MAINNET)) {
+        if (id.equals(ID_BTC_MAINNET)) {
             return MainNetParams.get();
-        } else if (id.equals(ID_TESTNET)) {
+        } else if (id.equals(ID_BTC_TESTNET)) {
             return TestNet3Params.get();
-        } else if (id.equals(ID_UNITTESTNET)) {
+        } else if (id.equals(ID_BTC_UNITTESTNET)) {
             return UnitTestParams.get();
-        } else if (id.equals(ID_REGTEST)) {
+        } else if (id.equals(ID_BTC_REGTEST)) {
             return RegTestParams.get();
+        } else if (id.equals(ID_BCH_MAINNET)) {
+            return MainNetParamsBCH.get();
+        } else if (id.equals(ID_BCH_TESTNET)) {
+            return TestNet3ParamsBCH.get();
         } else {
             return null;
         }
@@ -512,6 +524,39 @@ public abstract class NetworkParameters {
         }
 
         return verifyFlags;
+    }
+
+    public String getSegwitAddressPrefix() {
+
+        if (getUriScheme().equalsIgnoreCase(AbstractBitcoinNetParams.BITCOIN_SCHEME)) {
+            switch (id) {
+                case ID_BTC_TESTNET:
+                case ID_BTC_UNITTESTNET:
+                case ID_BTC_REGTEST:
+                    return "tb";
+                default:
+                    return "bc";
+            }
+        } else {
+            switch (id) {
+                case ID_BCH_TESTNET:
+                    return "bchtest";
+                default:
+                    return "bitcoincash";
+            }
+        }
+    }
+
+    public byte getSegwitAddressSeparator() {
+
+        switch (getUriScheme()) {
+            case AbstractBitcoinNetParams.BITCOIN_SCHEME:
+                return SEPARATOR_1;
+            case AbstractBitcoinCashNetParams.BITCOIN_SCHEME:
+                return SEPARATOR_COLON;
+            default:
+                return 0x00; // invalid separator to force fail
+        }
     }
 
     public abstract int getProtocolVersionNum(final ProtocolVersion version);

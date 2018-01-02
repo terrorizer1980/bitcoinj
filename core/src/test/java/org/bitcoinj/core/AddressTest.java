@@ -18,6 +18,7 @@
 package org.bitcoinj.core;
 
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.MainNetParamsBCH;
 import org.bitcoinj.params.Networks;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
@@ -203,6 +204,26 @@ public class AddressTest {
     public void roundtripBase58() throws Exception {
         String base58 = "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL";
         assertEquals(base58, Address.fromBase58(null, base58).toBase58());
+    }
+
+    @Test
+    public void roundtripBech32() throws Exception {
+        String bech32 = "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4";
+        assertEquals(bech32, Address.fromBech32(MainNetParams.get(), bech32).toBech32());
+    }
+
+    @Test
+    public void roundtripBase58ToBech32() throws Exception {
+        String base58 = "1FJJdX5g1DX7FRxJBhJNTDrRjTeihhsJLs";
+        String bech32 = "bc1qnntcclssmtuvfw2te7q49lzvw67cfvpzxger4j";
+        assertEquals(bech32, Address.fromBase58(MainNetParams.get(), base58).toBech32());
+    }
+
+    @Test
+    public void roundtripBech32ToBase58() throws Exception {
+        String base58 = "1FJJdX5g1DX7FRxJBhJNTDrRjTeihhsJLs";
+        String bech32 = "bc1qnntcclssmtuvfw2te7q49lzvw67cfvpzxger4j";
+        assertEquals(base58, Address.fromBech32(MainNetParams.get(), bech32).toBase58());
     }
 
     @Test
