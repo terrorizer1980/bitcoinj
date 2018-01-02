@@ -67,6 +67,8 @@ public class TestNet3ParamsBCH extends AbstractBitcoinCashNetParams {
         addrSeeds = null;
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
+        segwitPrefix = "bchtest";
+        segwitSeparator = 0x3a; // :
 
         majorityEnforceBlockUpgrade = TestNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = TestNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;

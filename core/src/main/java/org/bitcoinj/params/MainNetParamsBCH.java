@@ -43,6 +43,8 @@ public class MainNetParamsBCH extends AbstractBitcoinCashNetParams {
         packetMagic = 0xe3e1f3e8L;
         bip32HeaderPub = 0x0488B21E; //The 4 byte header that serializes in base58 to "xpub".
         bip32HeaderPriv = 0x0488ADE4; //The 4 byte header that serializes in base58 to "xprv"
+        segwitPrefix = "bitcoincash";
+        segwitSeparator = 0x3a; // :
 
         majorityEnforceBlockUpgrade = MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;

@@ -72,9 +72,6 @@ public abstract class NetworkParameters {
     public static final String PAYMENT_PROTOCOL_ID_UNIT_TESTS = "unittest";
     public static final String PAYMENT_PROTOCOL_ID_REGTEST = "regtest";
 
-    public static final byte SEPARATOR_COLON = 0x3a; // :
-    public static final byte SEPARATOR_1 = 0x31; // 1
-
     // TODO: Seed nodes should be here as well.
 
     protected Block genesisBlock;
@@ -89,6 +86,8 @@ public abstract class NetworkParameters {
     protected byte[] alertSigningKey;
     protected int bip32HeaderPub;
     protected int bip32HeaderPriv;
+    protected String segwitPrefix;
+    protected byte segwitSeparator;
 
     /** Used to check majorities for block version upgrade */
     protected int majorityEnforceBlockUpgrade;
@@ -527,36 +526,11 @@ public abstract class NetworkParameters {
     }
 
     public String getSegwitAddressPrefix() {
-
-        if (getUriScheme().equalsIgnoreCase(AbstractBitcoinNetParams.BITCOIN_SCHEME)) {
-            switch (id) {
-                case ID_BTC_TESTNET:
-                case ID_BTC_UNITTESTNET:
-                case ID_BTC_REGTEST:
-                    return "tb";
-                default:
-                    return "bc";
-            }
-        } else {
-            switch (id) {
-                case ID_BCH_TESTNET:
-                    return "bchtest";
-                default:
-                    return "bitcoincash";
-            }
-        }
+        return segwitPrefix;
     }
 
     public byte getSegwitAddressSeparator() {
-
-        switch (getUriScheme()) {
-            case AbstractBitcoinNetParams.BITCOIN_SCHEME:
-                return SEPARATOR_1;
-            case AbstractBitcoinCashNetParams.BITCOIN_SCHEME:
-                return SEPARATOR_COLON;
-            default:
-                return 0x00; // invalid separator to force fail
-        }
+        return segwitSeparator;
     }
 
     public abstract int getProtocolVersionNum(final ProtocolVersion version);
