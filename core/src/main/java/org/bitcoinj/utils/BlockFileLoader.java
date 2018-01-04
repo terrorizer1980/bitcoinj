@@ -35,10 +35,10 @@ import java.util.NoSuchElementException;
  * <p>This class reads block files stored in the Bitcoin Core format. This is simply a way to concatenate
  * blocks together. Importing block data with this tool can be a lot faster than syncing over the network, if you
  * have the files available.</p>
- * 
+ *
  * <p>In order to comply with Iterator&lt;Block>, this class swallows a lot of IOExceptions, which may result in a few
  * blocks being missed followed by a huge set of orphan blocks.</p>
- * 
+ *
  * <p>To blindly import all files which can be found in Bitcoin Core (version >= 0.8) datadir automatically,
  * try this code fragment:<br>
  * BlockFileLoader loader = new BlockFileLoader(BlockFileLoader.getReferenceClientBlockFileList());<br>
@@ -60,7 +60,7 @@ public class BlockFileLoader implements Iterable<Block>, Iterator<Block> {
         } else {
             defaultDataDir = System.getProperty("user.home") + "/.bitcoin/blocks/";
         }
-        
+
         List<File> list = new LinkedList<>();
         for (int i = 0; true; i++) {
             File file = new File(defaultDataDir + String.format(Locale.US, "blk%05d.dat", i));
@@ -70,17 +70,17 @@ public class BlockFileLoader implements Iterable<Block>, Iterator<Block> {
         }
         return list;
     }
-    
+
     private Iterator<File> fileIt;
     private FileInputStream currentFileStream = null;
     private Block nextBlock = null;
     private NetworkParameters params;
-    
+
     public BlockFileLoader(NetworkParameters params, List<File> files) {
         fileIt = files.iterator();
         this.params = params;
     }
-    
+
     @Override
     public boolean hasNext() {
         if (nextBlock == null)
@@ -96,7 +96,7 @@ public class BlockFileLoader implements Iterable<Block>, Iterator<Block> {
         nextBlock = null;
         return next;
     }
-    
+
     private void loadNextBlock() {
         while (true) {
             try {

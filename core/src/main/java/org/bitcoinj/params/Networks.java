@@ -16,12 +16,11 @@
 
 package org.bitcoinj.params;
 
-import org.bitcoinj.core.NetworkParameters;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
 import java.util.Collection;
 import java.util.Set;
+import org.bitcoinj.core.NetworkParameters;
 
 /**
  * Utility class that holds all the registered NetworkParameters types used for Address auto discovery.

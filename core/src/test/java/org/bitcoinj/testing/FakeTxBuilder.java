@@ -20,8 +20,6 @@ package org.bitcoinj.testing;
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.script.ScriptBuilder;
-import org.bitcoinj.store.BlockStore;
-import org.bitcoinj.store.BlockStoreException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -226,94 +224,5 @@ public class FakeTxBuilder {
             throw new RuntimeException(e);
         }
         return doubleSpends;
-    }
-
-    public static class BlockPair {
-        public StoredBlock storedBlock;
-        public Block block;
-    }
-
-    /** Emulates receiving a valid block that builds on top of the chain. */
-    public static BlockPair createFakeBlock(BlockStore blockStore, long version,
-                                            long timeSeconds, Transaction... transactions) {
-        return createFakeBlock(blockStore, version, timeSeconds, 0, transactions);
-    }
-
-    /** Emulates receiving a valid block */
-    public static BlockPair createFakeBlock(BlockStore blockStore, StoredBlock previousStoredBlock, long version,
-                                            long timeSeconds, int height,
-                                            Transaction... transactions) {
-        try {
-            Block previousBlock = previousStoredBlock.getHeader();
-            Address to = new ECKey().toAddress(previousBlock.getParams());
-            Block b = previousBlock.createNextBlock(to, version, timeSeconds, height);
-            // Coinbase tx was already added.
-            for (Transaction tx : transactions) {
-                tx.getConfidence().setSource(TransactionConfidence.Source.NETWORK);
-                b.addTransaction(tx);
-            }
-            b.solve();
-            BlockPair pair = new BlockPair();
-            pair.block = b;
-            pair.storedBlock = previousStoredBlock.build(b);
-            blockStore.put(pair.storedBlock);
-            blockStore.setChainHead(pair.storedBlock);
-            return pair;
-        } catch (VerificationException e) {
-            throw new RuntimeException(e);  // Cannot happen.
-        } catch (BlockStoreException e) {
-            throw new RuntimeException(e);  // Cannot happen.
-        }
-    }
-
-    public static BlockPair createFakeBlock(BlockStore blockStore, StoredBlock previousStoredBlock, int height, Transaction... transactions) {
-        return createFakeBlock(blockStore, previousStoredBlock, Block.BLOCK_VERSION_BIP66, Utils.currentTimeSeconds(), height, transactions);
-    }
-
-    /** Emulates receiving a valid block that builds on top of the chain. */
-    public static BlockPair createFakeBlock(BlockStore blockStore, long version, long timeSeconds, int height, Transaction... transactions) {
-        try {
-            return createFakeBlock(blockStore, blockStore.getChainHead(), version, timeSeconds, height, transactions);
-        } catch (BlockStoreException e) {
-            throw new RuntimeException(e);  // Cannot happen.
-        }
-    }
-
-    /** Emulates receiving a valid block that builds on top of the chain. */
-    public static BlockPair createFakeBlock(BlockStore blockStore, int height,
-                                            Transaction... transactions) {
-        return createFakeBlock(blockStore, Block.BLOCK_VERSION_GENESIS, Utils.currentTimeSeconds(), height, transactions);
-    }
-
-    /** Emulates receiving a valid block that builds on top of the chain. */
-    public static BlockPair createFakeBlock(BlockStore blockStore, Transaction... transactions) {
-        return createFakeBlock(blockStore, Block.BLOCK_VERSION_GENESIS, Utils.currentTimeSeconds(), 0, transactions);
-    }
-
-    public static Block makeSolvedTestBlock(BlockStore blockStore, Address coinsTo) throws BlockStoreException {
-        Block b = blockStore.getChainHead().getHeader().createNextBlock(coinsTo);
-        b.solve();
-        return b;
-    }
-
-    public static Block makeSolvedTestBlock(Block prev, Transaction... transactions) throws BlockStoreException {
-        Address to = new ECKey().toAddress(prev.getParams());
-        Block b = prev.createNextBlock(to);
-        // Coinbase tx already exists.
-        for (Transaction tx : transactions) {
-            b.addTransaction(tx);
-        }
-        b.solve();
-        return b;
-    }
-
-    public static Block makeSolvedTestBlock(Block prev, Address to, Transaction... transactions) throws BlockStoreException {
-        Block b = prev.createNextBlock(to);
-        // Coinbase tx already exists.
-        for (Transaction tx : transactions) {
-            b.addTransaction(tx);
-        }
-        b.solve();
-        return b;
     }
 }

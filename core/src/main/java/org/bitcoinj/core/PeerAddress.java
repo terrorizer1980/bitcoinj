@@ -89,14 +89,6 @@ public class PeerAddress extends ChildMessage {
     }
 
     /**
-     * Constructs a peer address from the given IP address. Port and version number are default for the given
-     * parameters.
-     */
-    public PeerAddress(NetworkParameters params, InetAddress addr) {
-        this(params, addr, params.getPort());
-    }
-
-    /**
      * Constructs a peer address from an {@link InetSocketAddress}. An InetSocketAddress can take in as parameters an
      * InetAddress or a String hostname. If you want to connect to a .onion, set the hostname to the .onion address.
      */
@@ -113,10 +105,6 @@ public class PeerAddress extends ChildMessage {
         this.port = port;
         this.protocolVersion = params.getProtocolVersionNum(NetworkParameters.ProtocolVersion.CURRENT);
         this.services = BigInteger.ZERO;
-    }
-
-    public static PeerAddress localhost(NetworkParameters params) {
-        return new PeerAddress(params, InetAddresses.forString("127.0.0.1"), params.getPort());
     }
 
     @Override

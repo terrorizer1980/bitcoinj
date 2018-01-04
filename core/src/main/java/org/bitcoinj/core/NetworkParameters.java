@@ -18,18 +18,12 @@
 package org.bitcoinj.core;
 
 import com.google.common.base.Objects;
-import org.bitcoinj.core.Block;
-import org.bitcoinj.core.StoredBlock;
-import org.bitcoinj.core.VerificationException;
 import org.bitcoinj.params.*;
 import org.bitcoinj.script.*;
-import org.bitcoinj.store.BlockStore;
-import org.bitcoinj.store.BlockStoreException;
 
 import org.bitcoinj.utils.MonetaryFormat;
 
 import javax.annotation.*;
-import java.io.*;
 import java.math.*;
 import java.util.*;
 
@@ -74,9 +68,8 @@ public abstract class NetworkParameters {
 
     // TODO: Seed nodes should be here as well.
 
-    protected Block genesisBlock;
     protected BigInteger maxTarget;
-    protected int port;
+//    protected int port;
     protected long packetMagic;  // Indicates message origin network and is used to seek to the next message when stream state is unknown.
     protected int addressHeader;
     protected int p2shHeader;
@@ -104,40 +97,13 @@ public abstract class NetworkParameters {
      * The depth of blocks required for a coinbase transaction to be spendable.
      */
     protected int spendableCoinbaseDepth;
-    protected int subsidyDecreaseBlockCount;
+//    protected int subsidyDecreaseBlockCount;
     
     protected int[] acceptableAddressCodes;
-    protected String[] dnsSeeds;
-    protected int[] addrSeeds;
-    protected Map<Integer, Sha256Hash> checkpoints = new HashMap<>();
     protected transient MessageSerializer defaultSerializer = null;
 
     protected NetworkParameters() {
         alertSigningKey = SATOSHI_KEY;
-        genesisBlock = createGenesis(this);
-    }
-
-    private static Block createGenesis(NetworkParameters n) {
-        Block genesisBlock = new Block(n, Block.BLOCK_VERSION_GENESIS);
-        Transaction t = new Transaction(n);
-        try {
-            // A script containing the difficulty bits and the following message:
-            //
-            //   "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
-            byte[] bytes = Utils.HEX.decode
-                    ("04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73");
-            t.addInput(new TransactionInput(n, t, bytes));
-            ByteArrayOutputStream scriptPubKeyBytes = new ByteArrayOutputStream();
-            Script.writeBytes(scriptPubKeyBytes, Utils.HEX.decode
-                    ("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"));
-            scriptPubKeyBytes.write(ScriptOpCodes.OP_CHECKSIG);
-            t.addOutput(new TransactionOutput(n, t, FIFTY_COINS, scriptPubKeyBytes.toByteArray()));
-        } catch (Exception e) {
-            // Cannot happen.
-            throw new RuntimeException(e);
-        }
-        genesisBlock.addTransaction(t);
-        return genesisBlock;
     }
 
     public static final int TARGET_TIMESPAN = 14 * 24 * 60 * 60;  // 2 weeks per difficulty cycle, on average.
@@ -256,63 +222,6 @@ public abstract class NetworkParameters {
 
     public int getSpendableCoinbaseDepth() {
         return spendableCoinbaseDepth;
-    }
-
-    /**
-     * Throws an exception if the block's difficulty is not correct.
-     *
-     * @throws VerificationException if the block's difficulty is not correct.
-     */
-    public abstract void checkDifficultyTransitions(StoredBlock storedPrev, Block next, final BlockStore blockStore) throws VerificationException, BlockStoreException;
-
-    /**
-     * Returns true if the block height is either not a checkpoint, or is a checkpoint and the hash matches.
-     */
-    public boolean passesCheckpoint(int height, Sha256Hash hash) {
-        Sha256Hash checkpointHash = checkpoints.get(height);
-        return checkpointHash == null || checkpointHash.equals(hash);
-    }
-
-    /**
-     * Returns true if the given height has a recorded checkpoint.
-     */
-    public boolean isCheckpoint(int height) {
-        Sha256Hash checkpointHash = checkpoints.get(height);
-        return checkpointHash != null;
-    }
-
-    public int getSubsidyDecreaseBlockCount() {
-        return subsidyDecreaseBlockCount;
-    }
-
-    /** Returns DNS names that when resolved, give IP addresses of active peers. */
-    public String[] getDnsSeeds() {
-        return dnsSeeds;
-    }
-
-    /** Returns IP address of active peers. */
-    public int[] getAddrSeeds() {
-        return addrSeeds;
-    }
-
-    /**
-     * <p>Genesis block for this chain.</p>
-     *
-     * <p>The first block in every chain is a well known constant shared between all Bitcoin implemenetations. For a
-     * block to be valid, it must be eventually possible to work backwards to the genesis block by following the
-     * prevBlockHash pointers in the block headers.</p>
-     *
-     * <p>The genesis blocks for both test and main networks contain the timestamp of when they were created,
-     * and a message in the coinbase transaction. It says, <i>"The Times 03/Jan/2009 Chancellor on brink of second
-     * bailout for banks"</i>.</p>
-     */
-    public Block getGenesisBlock() {
-        return genesisBlock;
-    }
-
-    /** Default TCP port on which to connect to nodes. */
-    public int getPort() {
-        return port;
     }
 
     /** The header bytes that identify the start of a packet on this network. */

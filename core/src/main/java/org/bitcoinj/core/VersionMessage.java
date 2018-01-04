@@ -91,30 +91,6 @@ public class VersionMessage extends Message {
         super(params, payload, 0);
     }
 
-    // It doesn't really make sense to ever lazily parse a version message or to retain the backing bytes.
-    // If you're receiving this on the wire you need to check the protocol version and it will never need to be sent
-    // back down the wire.
-    
-    public VersionMessage(NetworkParameters params, int newBestHeight) {
-        super(params);
-        clientVersion = params.getProtocolVersionNum(NetworkParameters.ProtocolVersion.CURRENT);
-        localServices = 0;
-        time = System.currentTimeMillis() / 1000;
-        // Note that the Bitcoin Core doesn't do anything with these, and finding out your own external IP address
-        // is kind of tricky anyway, so we just put nonsense here for now.
-        InetAddress localhost = InetAddresses.forString("127.0.0.1");
-        myAddr = new PeerAddress(params, localhost, params.getPort(), 0, BigInteger.ZERO);
-        theirAddr = new PeerAddress(params, localhost, params.getPort(), 0, BigInteger.ZERO);
-        subVer = LIBRARY_SUBVER;
-        bestHeight = newBestHeight;
-        relayTxesBeforeFilter = true;
-
-        length = 85;
-        if (protocolVersion > 31402)
-            length += 8;
-        length += VarInt.sizeOf(subVer.length()) + subVer.length();
-    }
-
     @Override
     protected void parse() throws ProtocolException {
         clientVersion = (int) readUint32();
@@ -222,18 +198,6 @@ public class VersionMessage extends Message {
         stringBuilder.append("best height:    ").append(bestHeight).append("\n");
         stringBuilder.append("delay tx relay: ").append(!relayTxesBeforeFilter).append("\n");
         return stringBuilder.toString();
-    }
-
-    public VersionMessage duplicate() {
-        VersionMessage v = new VersionMessage(params, (int) bestHeight);
-        v.clientVersion = clientVersion;
-        v.localServices = localServices;
-        v.time = time;
-        v.myAddr = myAddr;
-        v.theirAddr = theirAddr;
-        v.subVer = subVer;
-        v.relayTxesBeforeFilter = relayTxesBeforeFilter;
-        return v;
     }
 
     /**

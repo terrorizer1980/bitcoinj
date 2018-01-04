@@ -16,11 +16,7 @@
 
 package org.bitcoinj.params;
 
-import org.bitcoinj.core.Block;
-
 import java.math.BigInteger;
-
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Network parameters for the regression test mode of bitcoind in which all blocks are trivially solvable.
@@ -34,8 +30,6 @@ public class RegTestParams extends TestNet2Params {
         // By setting the block interval for difficulty adjustments to Integer.MAX_VALUE we make sure difficulty never changes.    
         interval = Integer.MAX_VALUE;
         maxTarget = MAX_TARGET;
-        subsidyDecreaseBlockCount = 150;
-        port = 18444;
         id = ID_BTC_REGTEST;
 
         majorityEnforceBlockUpgrade = MainNetParams.MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
@@ -46,22 +40,6 @@ public class RegTestParams extends TestNet2Params {
     @Override
     public boolean allowEmptyPeerChain() {
         return true;
-    }
-
-    private static Block genesis;
-
-    @Override
-    public Block getGenesisBlock() {
-        synchronized (RegTestParams.class) {
-            if (genesis == null) {
-                genesis = super.getGenesisBlock();
-                genesis.setNonce(2);
-                genesis.setDifficultyTarget(0x207fFFFFL);
-                genesis.setTime(1296688602L);
-                checkState(genesis.getHashAsString().toLowerCase().equals("0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"));
-            }
-            return genesis;
-        }
     }
 
     private static RegTestParams instance;

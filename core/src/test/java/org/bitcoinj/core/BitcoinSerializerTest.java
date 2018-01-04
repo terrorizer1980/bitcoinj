@@ -67,10 +67,6 @@ public class BitcoinSerializerTest {
         serializer.serialize(addressMessage, bos);
 
         assertEquals(31, addressMessage.getMessageSize());
-        addressMessage.addAddress(new PeerAddress(params, InetAddress.getLocalHost()));
-        assertEquals(61, addressMessage.getMessageSize());
-        addressMessage.removeAddress(0);
-        assertEquals(31, addressMessage.getMessageSize());
 
         //this wont be true due to dynamic timestamps.
         //assertTrue(LazyParseByteCacheTest.arrayContains(bos.toByteArray(), addrMessage));
