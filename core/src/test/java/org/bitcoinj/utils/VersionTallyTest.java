@@ -18,13 +18,13 @@ package org.bitcoinj.utils;
 
 import org.bitcoinj.core.Context;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.UnitTestParams;
+import org.bitcoinj.params.BitcoinUnitTestParams;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
 public class VersionTallyTest {
-    private static final NetworkParameters PARAMS = UnitTestParams.get();
+    private static final NetworkParameters PARAMS = BitcoinUnitTestParams.get();
 
     public VersionTallyTest() {
     }

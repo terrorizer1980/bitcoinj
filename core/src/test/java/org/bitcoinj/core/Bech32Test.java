@@ -19,8 +19,8 @@ package org.bitcoinj.core;
 import junit.framework.TestCase;
 import org.bitcoinj.core.Bech32.Bech32Parts;
 import org.bitcoinj.core.SegwitAddress.SegwitAddressParts;
-import org.bitcoinj.params.MainBtcNetParams;
-import org.bitcoinj.params.TestBtcNet3Params;
+import org.bitcoinj.params.BitcoinMainNetParams;
+import org.bitcoinj.params.BitcoinTestNet3Params;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 
@@ -31,7 +31,7 @@ public class Bech32Test extends TestCase {
 
         for(String address : VALID_CHECKSUM)   {
 
-            Bech32Parts part = Bech32.decode(MainBtcNetParams.get(), address);
+            Bech32Parts part = Bech32.decode(BitcoinMainNetParams.get(), address);
             assertNotNull(part.getPrefix());
             assertNotNull(part.getData());
         }
@@ -43,7 +43,7 @@ public class Bech32Test extends TestCase {
         for(String address : INVALID_CHECKSUM)   {
 
             try{
-                Bech32.decode(MainBtcNetParams.get(), address);
+                Bech32.decode(BitcoinMainNetParams.get(), address);
                 fail("Invalid checksum should not pass.");
             }
             catch(Exception e) {
@@ -62,9 +62,9 @@ public class Bech32Test extends TestCase {
 
             NetworkParameters params;
             if (address.startsWith("bc") || address.startsWith("BC")) {
-                params = MainBtcNetParams.get();
+                params = BitcoinMainNetParams.get();
             } else {
-                params = TestBtcNet3Params.get();
+                params = BitcoinTestNet3Params.get();
             }
 
             SegwitAddressParts segp = SegwitAddress.decode(params, address);
@@ -99,9 +99,9 @@ public class Bech32Test extends TestCase {
             try {
                 NetworkParameters params;
                 if (address.startsWith("bc") || address.startsWith("BC")) {
-                    params = MainBtcNetParams.get();
+                    params = BitcoinMainNetParams.get();
                 } else {
-                    params = TestBtcNet3Params.get();
+                    params = BitcoinTestNet3Params.get();
                 }
 
                 Bech32Parts bech32 = Bech32.decode(params, address);

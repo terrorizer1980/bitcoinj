@@ -24,8 +24,8 @@ import org.bitcoinj.core.Utils;
  * Parameters for the testnet, a separate public instance of Bitcoin that has relaxed rules suitable for development
  * and testing of applications and new Bitcoin versions.
  */
-public class TestBchNet3Params extends AbstractBchNetParams {
-    public TestBchNet3Params() {
+public class BitcoinCashTestNet3Params extends AbstractNetParams {
+    public BitcoinCashTestNet3Params() {
         super();
         id = ID_BCH_TESTNET;
         // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
@@ -40,20 +40,21 @@ public class TestBchNet3Params extends AbstractBchNetParams {
         spendableCoinbaseDepth = 100;
         alertSigningKey = Utils.HEX.decode("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
 
+        uriScheme = "bitcoincash";
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
         segwitPrefix = "bchtest";
         segwitSeparator = 0x3a; // :
 
-        majorityEnforceBlockUpgrade = TestBtcNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
-        majorityRejectBlockOutdated = TestBtcNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;
-        majorityWindow = TestBtcNet2Params.TESTNET_MAJORITY_WINDOW;
+        majorityEnforceBlockUpgrade = BitcoinTestNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
+        majorityRejectBlockOutdated = BitcoinTestNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;
+        majorityWindow = BitcoinTestNet2Params.TESTNET_MAJORITY_WINDOW;
     }
 
-    private static TestBchNet3Params instance;
-    public static synchronized TestBchNet3Params get() {
+    private static BitcoinCashTestNet3Params instance;
+    public static synchronized BitcoinCashTestNet3Params get() {
         if (instance == null) {
-            instance = new TestBchNet3Params();
+            instance = new BitcoinCashTestNet3Params();
         }
         return instance;
     }

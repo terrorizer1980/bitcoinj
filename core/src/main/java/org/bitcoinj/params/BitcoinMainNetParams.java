@@ -17,18 +17,18 @@
 
 package org.bitcoinj.params;
 
-import com.google.common.collect.ImmutableSet;
 import org.bitcoinj.core.Utils;
 
 /**
  * Parameters for the main production network on which people trade goods and services.
  */
-public class MainBchNetParams extends AbstractBchNetParams {
+public class BitcoinMainNetParams extends AbstractNetParams {
     public static final int MAINNET_MAJORITY_WINDOW = 1000;
     public static final int MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED = 950;
     public static final int MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 750;
+    public static final String URI_SCHEME = "bitcoin";
 
-    public MainBchNetParams() {
+    public BitcoinMainNetParams() {
         super();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
@@ -37,24 +37,26 @@ public class MainBchNetParams extends AbstractBchNetParams {
         addressHeader = 0;
         p2shHeader = 5;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        packetMagic = 0xe3e1f3e8L;
+        packetMagic = 0xf9beb4d9L;
+
+        uriScheme = URI_SCHEME;
         bip32HeaderPub = 0x0488B21E; //The 4 byte header that serializes in base58 to "xpub".
         bip32HeaderPriv = 0x0488ADE4; //The 4 byte header that serializes in base58 to "xprv"
-        segwitPrefix = "bitcoincash";
-        segwitSeparator = 0x3a; // :
+        segwitPrefix = "bc";
+        segwitSeparator = 0x31; // 1
 
         majorityEnforceBlockUpgrade = MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;
         majorityWindow = MAINNET_MAJORITY_WINDOW;
 
-        id = ID_BCH_MAINNET;
+        id = ID_BTC_MAINNET;
         spendableCoinbaseDepth = 100;
     }
 
-    private static MainBchNetParams instance;
-    public static synchronized MainBchNetParams get() {
+    private static BitcoinMainNetParams instance;
+    public static synchronized BitcoinMainNetParams get() {
         if (instance == null) {
-            instance = new MainBchNetParams();
+            instance = new BitcoinMainNetParams();
         }
         return instance;
     }

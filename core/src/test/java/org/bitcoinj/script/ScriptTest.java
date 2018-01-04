@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bitcoinj.core.*;
 import org.bitcoinj.core.Transaction.SigHash;
 import org.bitcoinj.crypto.TransactionSignature;
-import org.bitcoinj.params.MainBtcNetParams;
-import org.bitcoinj.params.TestBtcNet3Params;
+import org.bitcoinj.params.BitcoinMainNetParams;
+import org.bitcoinj.params.BitcoinTestNet3Params;
 import org.bitcoinj.script.Script.VerifyFlag;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
@@ -56,7 +56,7 @@ public class ScriptTest {
 
     static final String pubkeyProg = "76a91433e81a941e64cda12c6a299ed322ddbdd03f8d0e88ac";
 
-    private static final NetworkParameters PARAMS = TestBtcNet3Params.get();
+    private static final NetworkParameters PARAMS = BitcoinTestNet3Params.get();
 
     private static final Logger log = LoggerFactory.getLogger(ScriptTest.class);
 
@@ -113,7 +113,7 @@ public class ScriptTest {
 
     @Test
     public void testP2SHOutputScript() throws Exception {
-        Address p2shAddress = Address.fromBase58(MainBtcNetParams.get(), "35b9vsyH1KoFT5a5KtrKusaCcPLkiSo1tU");
+        Address p2shAddress = Address.fromBase58(BitcoinMainNetParams.get(), "35b9vsyH1KoFT5a5KtrKusaCcPLkiSo1tU");
         assertTrue(ScriptBuilder.createOutputScript(p2shAddress).isPayToScriptHash());
     }
 

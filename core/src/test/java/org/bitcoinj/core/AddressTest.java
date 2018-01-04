@@ -17,9 +17,9 @@
 
 package org.bitcoinj.core;
 
-import org.bitcoinj.params.MainBtcNetParams;
+import org.bitcoinj.params.BitcoinMainNetParams;
+import org.bitcoinj.params.BitcoinTestNet3Params;
 import org.bitcoinj.params.Networks;
-import org.bitcoinj.params.TestBtcNet3Params;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.junit.Test;
@@ -35,8 +35,8 @@ import static org.bitcoinj.core.Utils.HEX;
 import static org.junit.Assert.*;
 
 public class AddressTest {
-    static final NetworkParameters testParams = TestBtcNet3Params.get();
-    static final NetworkParameters mainParams = MainBtcNetParams.get();
+    static final NetworkParameters testParams = BitcoinTestNet3Params.get();
+    static final NetworkParameters mainParams = BitcoinMainNetParams.get();
 
     @Test
     public void testJavaSerialization() throws Exception {
@@ -104,8 +104,8 @@ public class AddressTest {
             fail();
         } catch (WrongNetworkException e) {
             // Success.
-            assertEquals(e.verCode, MainBtcNetParams.get().getAddressHeader());
-            assertTrue(Arrays.equals(e.acceptableVersions, TestBtcNet3Params.get().getAcceptableAddressCodes()));
+            assertEquals(e.verCode, BitcoinMainNetParams.get().getAddressHeader());
+            assertTrue(Arrays.equals(e.acceptableVersions, BitcoinTestNet3Params.get().getAcceptableAddressCodes()));
         } catch (AddressFormatException e) {
             fail();
         }
@@ -114,15 +114,15 @@ public class AddressTest {
     @Test
     public void getNetwork() throws Exception {
         NetworkParameters params = Address.getParametersFromAddress("17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
-        assertEquals(MainBtcNetParams.get().getId(), params.getId());
+        assertEquals(BitcoinMainNetParams.get().getId(), params.getId());
         params = Address.getParametersFromAddress("n4eA2nbYqErp7H6jebchxAN59DmNpksexv");
-        assertEquals(TestBtcNet3Params.get().getId(), params.getId());
+        assertEquals(BitcoinTestNet3Params.get().getId(), params.getId());
     }
 
     @Test
     public void getAltNetwork() throws Exception {
         // An alternative network
-        class AltNetwork extends MainBtcNetParams {
+        class AltNetwork extends BitcoinMainNetParams {
             AltNetwork() {
                 super();
                 id = "alt.network";
@@ -139,7 +139,7 @@ public class AddressTest {
         assertEquals(altNetwork.getId(), params.getId());
         // Check if main network works as before
         params = Address.getParametersFromAddress("17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
-        assertEquals(MainBtcNetParams.get().getId(), params.getId());
+        assertEquals(BitcoinMainNetParams.get().getId(), params.getId());
         // Unregister network
         Networks.unregister(altNetwork);
         try {
@@ -151,18 +151,18 @@ public class AddressTest {
     @Test
     public void p2shAddress() throws Exception {
         // Test that we can construct P2SH addresses
-        Address mainNetP2SHAddress = Address.fromBase58(MainBtcNetParams.get(), "35b9vsyH1KoFT5a5KtrKusaCcPLkiSo1tU");
-        assertEquals(mainNetP2SHAddress.version, MainBtcNetParams.get().p2shHeader);
+        Address mainNetP2SHAddress = Address.fromBase58(BitcoinMainNetParams.get(), "35b9vsyH1KoFT5a5KtrKusaCcPLkiSo1tU");
+        assertEquals(mainNetP2SHAddress.version, BitcoinMainNetParams.get().p2shHeader);
         assertTrue(mainNetP2SHAddress.isP2SHAddress());
-        Address testNetP2SHAddress = Address.fromBase58(TestBtcNet3Params.get(), "2MuVSxtfivPKJe93EC1Tb9UhJtGhsoWEHCe");
-        assertEquals(testNetP2SHAddress.version, TestBtcNet3Params.get().p2shHeader);
+        Address testNetP2SHAddress = Address.fromBase58(BitcoinTestNet3Params.get(), "2MuVSxtfivPKJe93EC1Tb9UhJtGhsoWEHCe");
+        assertEquals(testNetP2SHAddress.version, BitcoinTestNet3Params.get().p2shHeader);
         assertTrue(testNetP2SHAddress.isP2SHAddress());
 
         // Test that we can determine what network a P2SH address belongs to
         NetworkParameters mainNetParams = Address.getParametersFromAddress("35b9vsyH1KoFT5a5KtrKusaCcPLkiSo1tU");
-        assertEquals(MainBtcNetParams.get().getId(), mainNetParams.getId());
+        assertEquals(BitcoinMainNetParams.get().getId(), mainNetParams.getId());
         NetworkParameters testNetParams = Address.getParametersFromAddress("2MuVSxtfivPKJe93EC1Tb9UhJtGhsoWEHCe");
-        assertEquals(TestBtcNet3Params.get().getId(), testNetParams.getId());
+        assertEquals(BitcoinTestNet3Params.get().getId(), testNetParams.getId());
 
         // Test that we can convert them from hashes
         byte[] hex = HEX.decode("2ac4b0b501117cc8119c5797b519538d4942e90e");
@@ -208,21 +208,21 @@ public class AddressTest {
     @Test
     public void roundtripBech32() throws Exception {
         String bech32 = "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4";
-        assertEquals(bech32, Address.fromBech32(MainBtcNetParams.get(), bech32).toBech32());
+        assertEquals(bech32, Address.fromBech32(BitcoinMainNetParams.get(), bech32).toBech32());
     }
 
     @Test
     public void roundtripBase58ToBech32() throws Exception {
         String base58 = "1FJJdX5g1DX7FRxJBhJNTDrRjTeihhsJLs";
         String bech32 = "bc1qnntcclssmtuvfw2te7q49lzvw67cfvpzxger4j";
-        assertEquals(bech32, Address.fromBase58(MainBtcNetParams.get(), base58).toBech32());
+        assertEquals(bech32, Address.fromBase58(BitcoinMainNetParams.get(), base58).toBech32());
     }
 
     @Test
     public void roundtripBech32ToBase58() throws Exception {
         String base58 = "1FJJdX5g1DX7FRxJBhJNTDrRjTeihhsJLs";
         String bech32 = "bc1qnntcclssmtuvfw2te7q49lzvw67cfvpzxger4j";
-        assertEquals(base58, Address.fromBech32(MainBtcNetParams.get(), bech32).toBase58());
+        assertEquals(base58, Address.fromBech32(BitcoinMainNetParams.get(), bech32).toBase58());
     }
 
     @Test

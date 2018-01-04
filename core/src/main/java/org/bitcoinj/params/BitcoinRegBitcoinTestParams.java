@@ -21,10 +21,10 @@ import java.math.BigInteger;
 /**
  * Network parameters for the regression test mode of bitcoind in which all blocks are trivially solvable.
  */
-public class RegBtcTestParams extends TestBtcNet2Params {
+public class BitcoinRegBitcoinTestParams extends BitcoinTestNet2Params {
     private static final BigInteger MAX_TARGET = new BigInteger("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
 
-    public RegBtcTestParams() {
+    public BitcoinRegBitcoinTestParams() {
         super();
         // Difficulty adjustments are disabled for regtest. 
         // By setting the block interval for difficulty adjustments to Integer.MAX_VALUE we make sure difficulty never changes.    
@@ -32,9 +32,9 @@ public class RegBtcTestParams extends TestBtcNet2Params {
         maxTarget = MAX_TARGET;
         id = ID_BTC_REGTEST;
 
-        majorityEnforceBlockUpgrade = MainBtcNetParams.MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
-        majorityRejectBlockOutdated = MainBtcNetParams.MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;
-        majorityWindow = MainBtcNetParams.MAINNET_MAJORITY_WINDOW;
+        majorityEnforceBlockUpgrade = BitcoinMainNetParams.MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
+        majorityRejectBlockOutdated = BitcoinMainNetParams.MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;
+        majorityWindow = BitcoinMainNetParams.MAINNET_MAJORITY_WINDOW;
     }
 
     @Override
@@ -42,10 +42,10 @@ public class RegBtcTestParams extends TestBtcNet2Params {
         return true;
     }
 
-    private static RegBtcTestParams instance;
-    public static synchronized RegBtcTestParams get() {
+    private static BitcoinRegBitcoinTestParams instance;
+    public static synchronized BitcoinRegBitcoinTestParams get() {
         if (instance == null) {
-            instance = new RegBtcTestParams();
+            instance = new BitcoinRegBitcoinTestParams();
         }
         return instance;
     }

@@ -17,7 +17,7 @@
 
 package org.bitcoinj.core;
 
-import org.bitcoinj.params.UnitTestParams;
+import org.bitcoinj.params.BitcoinUnitTestParams;
 import org.junit.Test;
 
 import static org.bitcoinj.core.Utils.HEX;
@@ -29,7 +29,7 @@ public class VersionMessageTest {
     @Test
     // Test that we can decode version messages which miss data which some old nodes may not include
     public void testDecode() throws Exception {
-        NetworkParameters params = UnitTestParams.get();
+        NetworkParameters params = BitcoinUnitTestParams.get();
 
         VersionMessage ver = new VersionMessage(params, HEX.decode("7111010000000000000000003334a85500000000000000000000000000000000000000000000ffff7f000001479d000000000000000000000000000000000000ffff7f000001479d00000000000000000f2f626974636f696e6a3a302e31332f0004000000"));
         assertFalse(ver.relayTxesBeforeFilter);

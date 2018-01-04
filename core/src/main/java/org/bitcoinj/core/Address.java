@@ -50,7 +50,7 @@ public class Address extends VersionedChecksummedBytes {
     /**
      * Construct an address from parameters, the address version, and the hash160 form. Example:<p>
      *
-     * <pre>new Address(MainBtcNetParams.get(), NetworkParameters.getAddressHeader(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
+     * <pre>new Address(BitcoinMainNetParams.get(), NetworkParameters.getAddressHeader(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
      */
     public Address(NetworkParameters params, int version, byte[] hash160) throws WrongNetworkException {
         super(version, hash160);
@@ -98,7 +98,7 @@ public class Address extends VersionedChecksummedBytes {
     /**
      * Construct an address from parameters and the hash160 form. Example:<p>
      *
-     * <pre>new Address(MainBtcNetParams.get(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
+     * <pre>new Address(BitcoinMainNetParams.get(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
      */
     public Address(NetworkParameters params, byte[] hash160) {
         super(params.getAddressHeader(), hash160);

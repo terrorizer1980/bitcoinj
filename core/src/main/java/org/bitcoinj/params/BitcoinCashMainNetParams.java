@@ -17,18 +17,18 @@
 
 package org.bitcoinj.params;
 
-import com.google.common.collect.ImmutableSet;
 import org.bitcoinj.core.Utils;
 
 /**
  * Parameters for the main production network on which people trade goods and services.
  */
-public class MainBtcNetParams extends AbstractBtcNetParams {
+public class BitcoinCashMainNetParams extends AbstractNetParams {
     public static final int MAINNET_MAJORITY_WINDOW = 1000;
     public static final int MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED = 950;
     public static final int MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 750;
+    public static final String URI_SCHEME = "bitcoincash";
 
-    public MainBtcNetParams() {
+    public BitcoinCashMainNetParams() {
         super();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
@@ -37,24 +37,26 @@ public class MainBtcNetParams extends AbstractBtcNetParams {
         addressHeader = 0;
         p2shHeader = 5;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        packetMagic = 0xf9beb4d9L;
+        packetMagic = 0xe3e1f3e8L;
+
+        uriScheme = URI_SCHEME;
         bip32HeaderPub = 0x0488B21E; //The 4 byte header that serializes in base58 to "xpub".
         bip32HeaderPriv = 0x0488ADE4; //The 4 byte header that serializes in base58 to "xprv"
-        segwitPrefix = "bc";
-        segwitSeparator = 0x31; // 1
+        segwitPrefix = "bitcoincash";
+        segwitSeparator = 0x3a; // :
 
         majorityEnforceBlockUpgrade = MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;
         majorityWindow = MAINNET_MAJORITY_WINDOW;
 
-        id = ID_BTC_MAINNET;
+        id = ID_BCH_MAINNET;
         spendableCoinbaseDepth = 100;
     }
 
-    private static MainBtcNetParams instance;
-    public static synchronized MainBtcNetParams get() {
+    private static BitcoinCashMainNetParams instance;
+    public static synchronized BitcoinCashMainNetParams get() {
         if (instance == null) {
-            instance = new MainBtcNetParams();
+            instance = new BitcoinCashMainNetParams();
         }
         return instance;
     }

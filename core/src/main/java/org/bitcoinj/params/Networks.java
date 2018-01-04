@@ -31,10 +31,10 @@ import org.bitcoinj.core.NetworkParameters;
 public class Networks {
     /** Registered networks */
     private static Set<? extends NetworkParameters> networks = ImmutableSet.of(
-        TestBtcNet3Params.get(),
-        MainBtcNetParams.get(),
-        TestBchNet3Params.get(),
-        MainBchNetParams.get()
+        BitcoinTestNet3Params.get(),
+        BitcoinMainNetParams.get(),
+        BitcoinCashTestNet3Params.get(),
+        BitcoinCashMainNetParams.get()
     );
 
     public static Set<? extends NetworkParameters> get() {

@@ -27,15 +27,15 @@ import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableList;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.MainBchNetParams;
-import org.bitcoinj.params.MainBtcNetParams;
-import org.bitcoinj.params.TestBchNet3Params;
+import org.bitcoinj.params.BitcoinCashMainNetParams;
+import org.bitcoinj.params.BitcoinMainNetParams;
+import org.bitcoinj.params.BitcoinCashTestNet3Params;
 import org.junit.Test;
 
 public class BitcoinCashURITest {
     private BitcoinCashURI testObject = null;
 
-    private static final NetworkParameters MAINNET = MainBchNetParams.get();
+    private static final NetworkParameters MAINNET = BitcoinCashMainNetParams.get();
     private static final String MAINNET_GOOD_ADDRESS = "1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH";
     private static final String BITCOIN_CASH_SCHEME = MAINNET.getUriScheme();
 
@@ -76,7 +76,7 @@ public class BitcoinCashURITest {
         assertEquals("bitcoincash:" + MAINNET_GOOD_ADDRESS, BitcoinCashURI.convertToBitcoinCashURI(goodAddress, null, "", ""));
 
         // different scheme
-        final NetworkParameters alternativeParameters = new MainBtcNetParams() {
+        final NetworkParameters alternativeParameters = new BitcoinMainNetParams() {
             @Override
             public String getUriScheme() {
                 return "test";
@@ -155,7 +155,8 @@ public class BitcoinCashURITest {
     @Test
     public void testBad_IncorrectAddressType() {
         try {
-            testObject = new BitcoinCashURI(TestBchNet3Params.get(), BITCOIN_CASH_SCHEME + ":" + MAINNET_GOOD_ADDRESS);
+            testObject = new BitcoinCashURI(
+                BitcoinCashTestNet3Params.get(), BITCOIN_CASH_SCHEME + ":" + MAINNET_GOOD_ADDRESS);
             fail("Expecting BitcoinURIParseException");
         } catch (BitcoinURIParseException e) {
             assertTrue(e.getMessage().contains("Bad address"));
@@ -384,7 +385,7 @@ public class BitcoinCashURITest {
     @Test
     public void testPaymentProtocolReq() throws Exception {
         // Non-backwards compatible form ...
-        BitcoinCashURI uri = new BitcoinCashURI(TestBchNet3Params.get(), "bitcoincash:?r=https%3A%2F%2Fbitcoincore.org%2F%7Egavin%2Ff.php%3Fh%3Db0f02e7cea67f168e25ec9b9f9d584f9");
+        BitcoinCashURI uri = new BitcoinCashURI(BitcoinCashTestNet3Params.get(), "bitcoincash:?r=https%3A%2F%2Fbitcoincore.org%2F%7Egavin%2Ff.php%3Fh%3Db0f02e7cea67f168e25ec9b9f9d584f9");
         assertEquals("https://bitcoincore.org/~gavin/f.php?h=b0f02e7cea67f168e25ec9b9f9d584f9", uri.getPaymentRequestUrl());
         assertEquals(ImmutableList.of("https://bitcoincore.org/~gavin/f.php?h=b0f02e7cea67f168e25ec9b9f9d584f9"),
                 uri.getPaymentRequestUrls());
@@ -409,7 +410,7 @@ public class BitcoinCashURITest {
 
     @Test
     public void testUnescapedPaymentProtocolReq() throws Exception {
-        BitcoinCashURI uri = new BitcoinCashURI(TestBchNet3Params.get(),
+        BitcoinCashURI uri = new BitcoinCashURI(BitcoinCashTestNet3Params.get(),
                 "bitcoincash:?r=https://merchant.com/pay.php?h%3D2a8628fc2fbe");
         assertEquals("https://merchant.com/pay.php?h=2a8628fc2fbe", uri.getPaymentRequestUrl());
         assertEquals(ImmutableList.of("https://merchant.com/pay.php?h=2a8628fc2fbe"), uri.getPaymentRequestUrls());

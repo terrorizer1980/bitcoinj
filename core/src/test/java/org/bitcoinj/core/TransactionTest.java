@@ -22,14 +22,12 @@ import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.*;
 import org.bitcoinj.script.*;
 import org.bitcoinj.testing.*;
-import org.easymock.*;
 import org.junit.*;
 
 import java.math.BigInteger;
 import java.util.*;
 import static org.bitcoinj.core.Utils.HEX;
 
-import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 /**
@@ -39,7 +37,7 @@ import static org.junit.Assert.*;
  * so we make sure to cover it here as well.
  */
 public class TransactionTest {
-    private static final NetworkParameters PARAMS = UnitTestParams.get();
+    private static final NetworkParameters PARAMS = BitcoinUnitTestParams.get();
     private static final Address ADDRESS = new ECKey().toAddress(PARAMS);
 
     private Transaction tx;

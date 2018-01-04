@@ -27,14 +27,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
-import org.bitcoinj.params.MainBtcNetParams;
-import org.bitcoinj.params.TestBtcNet3Params;
+import org.bitcoinj.params.BitcoinMainNetParams;
+import org.bitcoinj.params.BitcoinTestNet3Params;
 import org.junit.Test;
 
 public class DumpedPrivateKeyTest {
 
-    private static final MainBtcNetParams MAINNET = MainBtcNetParams.get();
-    private static final TestBtcNet3Params TESTNET = TestBtcNet3Params.get();
+    private static final BitcoinMainNetParams MAINNET = BitcoinMainNetParams.get();
+    private static final BitcoinTestNet3Params TESTNET = BitcoinTestNet3Params.get();
 
     @Test
     public void checkNetwork() throws Exception {

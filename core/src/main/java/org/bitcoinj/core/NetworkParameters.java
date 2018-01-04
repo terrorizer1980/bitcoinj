@@ -18,8 +18,6 @@
 package org.bitcoinj.core;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import org.bitcoinj.params.*;
 import org.bitcoinj.script.*;
 
@@ -36,7 +34,7 @@ import org.bitcoinj.utils.VersionTally;
  * <p>NetworkParameters contains the data needed for working with an instantiation of a Bitcoin chain.</p>
  *
  * <p>This is an abstract class, concrete instantiations can be found in the params package. There are four:
- * one for the main network ({@link MainBtcNetParams}), one for the public test network, and two others that are
+ * one for the main network ({@link BitcoinMainNetParams}), one for the public test network, and two others that are
  * intended for unit testing and local app development purposes. Although this class contains some aliases for
  * them, you are encouraged to call the static get() methods on each specific params class directly.</p>
  */
@@ -70,8 +68,8 @@ public abstract class NetworkParameters {
 
     // TODO: Seed nodes should be here as well.
 
+    protected String uriScheme;
     protected BigInteger maxTarget;
-//    protected int port;
     protected long packetMagic;  // Indicates message origin network and is used to seek to the next message when stream state is unknown.
     protected int addressHeader;
     protected int p2shHeader;
@@ -129,40 +127,40 @@ public abstract class NetworkParameters {
      */
     public static final Coin MAX_MONEY = COIN.multiply(MAX_COINS);
 
-    /** Alias for TestBtcNet3Params.get(), use that instead. */
+    /** Alias for BitcoinTestNet3Params.get(), use that instead. */
     @Deprecated
     public static NetworkParameters testNet() {
-        return TestBtcNet3Params.get();
+        return BitcoinTestNet3Params.get();
     }
 
-    /** Alias for TestBtcNet2Params.get(), use that instead. */
+    /** Alias for BitcoinTestNet2Params.get(), use that instead. */
     @Deprecated
     public static NetworkParameters testNet2() {
-        return TestBtcNet2Params.get();
+        return BitcoinTestNet2Params.get();
     }
 
-    /** Alias for TestBtcNet3Params.get(), use that instead. */
+    /** Alias for BitcoinTestNet3Params.get(), use that instead. */
     @Deprecated
     public static NetworkParameters testNet3() {
-        return TestBtcNet3Params.get();
+        return BitcoinTestNet3Params.get();
     }
 
-    /** Alias for MainBtcNetParams.get(), use that instead */
+    /** Alias for BitcoinMainNetParams.get(), use that instead */
     @Deprecated
     public static NetworkParameters prodNet() {
-        return MainBtcNetParams.get();
+        return BitcoinMainNetParams.get();
     }
 
     /** Returns a testnet params modified to allow any difficulty target. */
     @Deprecated
     public static NetworkParameters unitTests() {
-        return UnitTestParams.get();
+        return BitcoinUnitTestParams.get();
     }
 
     /** Returns a standard regression test params (similar to unitTests) */
     @Deprecated
     public static NetworkParameters regTests() {
-        return RegBtcTestParams.get();
+        return BitcoinRegBitcoinTestParams.get();
     }
 
     /**
@@ -190,17 +188,17 @@ public abstract class NetworkParameters {
     @Nullable
     public static NetworkParameters fromID(String id) {
         if (id.equals(ID_BTC_MAINNET)) {
-            return MainBtcNetParams.get();
+            return BitcoinMainNetParams.get();
         } else if (id.equals(ID_BTC_TESTNET)) {
-            return TestBtcNet3Params.get();
+            return BitcoinTestNet3Params.get();
         } else if (id.equals(ID_BTC_UNITTESTNET)) {
-            return UnitTestParams.get();
+            return BitcoinUnitTestParams.get();
         } else if (id.equals(ID_BTC_REGTEST)) {
-            return RegBtcTestParams.get();
+            return BitcoinRegBitcoinTestParams.get();
         } else if (id.equals(ID_BCH_MAINNET)) {
-            return MainBchNetParams.get();
+            return BitcoinCashMainNetParams.get();
         } else if (id.equals(ID_BCH_TESTNET)) {
-            return TestBchNet3Params.get();
+            return BitcoinCashTestNet3Params.get();
         } else {
             return null;
         }
@@ -210,13 +208,13 @@ public abstract class NetworkParameters {
     @Nullable
     public static NetworkParameters fromPmtProtocolID(String pmtProtocolId) {
         if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_MAINNET)) {
-            return MainBtcNetParams.get();
+            return BitcoinMainNetParams.get();
         } else if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_TESTNET)) {
-            return TestBtcNet3Params.get();
+            return BitcoinTestNet3Params.get();
         } else if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_UNIT_TESTS)) {
-            return UnitTestParams.get();
+            return BitcoinUnitTestParams.get();
         } else if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_REGTEST)) {
-            return RegBtcTestParams.get();
+            return BitcoinRegBitcoinTestParams.get();
         } else {
             return null;
         }
@@ -326,7 +324,9 @@ public abstract class NetworkParameters {
     /**
      * Scheme part for URIs, for example "bitcoin".
      */
-    public abstract String getUriScheme();
+    public String getUriScheme() {
+        return uriScheme;
+    }
 
     /**
      * Returns whether this network has a maximum number of coins (finite supply) or
