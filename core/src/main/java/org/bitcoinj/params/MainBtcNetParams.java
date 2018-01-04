@@ -17,17 +17,18 @@
 
 package org.bitcoinj.params;
 
+import com.google.common.collect.ImmutableSet;
 import org.bitcoinj.core.Utils;
 
 /**
  * Parameters for the main production network on which people trade goods and services.
  */
-public class MainNetParamsBCH extends AbstractBitcoinCashNetParams {
+public class MainBtcNetParams extends AbstractBtcNetParams {
     public static final int MAINNET_MAJORITY_WINDOW = 1000;
     public static final int MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED = 950;
     public static final int MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 750;
 
-    public MainNetParamsBCH() {
+    public MainBtcNetParams() {
         super();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
@@ -36,24 +37,24 @@ public class MainNetParamsBCH extends AbstractBitcoinCashNetParams {
         addressHeader = 0;
         p2shHeader = 5;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        packetMagic = 0xe3e1f3e8L;
+        packetMagic = 0xf9beb4d9L;
         bip32HeaderPub = 0x0488B21E; //The 4 byte header that serializes in base58 to "xpub".
         bip32HeaderPriv = 0x0488ADE4; //The 4 byte header that serializes in base58 to "xprv"
-        segwitPrefix = "bitcoincash";
-        segwitSeparator = 0x3a; // :
+        segwitPrefix = "bc";
+        segwitSeparator = 0x31; // 1
 
         majorityEnforceBlockUpgrade = MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;
         majorityWindow = MAINNET_MAJORITY_WINDOW;
 
-        id = ID_BCH_MAINNET;
+        id = ID_BTC_MAINNET;
         spendableCoinbaseDepth = 100;
     }
 
-    private static MainNetParamsBCH instance;
-    public static synchronized MainNetParamsBCH get() {
+    private static MainBtcNetParams instance;
+    public static synchronized MainBtcNetParams get() {
         if (instance == null) {
-            instance = new MainNetParamsBCH();
+            instance = new MainBtcNetParams();
         }
         return instance;
     }

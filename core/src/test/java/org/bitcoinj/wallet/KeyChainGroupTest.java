@@ -18,7 +18,7 @@
 //
 //import org.bitcoinj.core.*;
 //import org.bitcoinj.crypto.*;
-//import org.bitcoinj.params.MainNetParams;
+//import org.bitcoinj.params.MainBtcNetParams;
 //import org.bitcoinj.utils.BriefLogFormatter;
 //import org.bitcoinj.utils.Threading;
 //
@@ -40,7 +40,7 @@
 //    // Number of initial keys in this tests HD wallet, including interior keys.
 //    private static final int INITIAL_KEYS = 4;
 //    private static final int LOOKAHEAD_SIZE = 5;
-//    private static final NetworkParameters PARAMS = MainNetParams.get();
+//    private static final NetworkParameters PARAMS = MainBtcNetParams.get();
 //    private static final String XPUB = "xpub68KFnj3bqUx1s7mHejLDBPywCAKdJEu1b49uniEEn2WSbHmZ7xbLqFTjJbtx1LUcAt1DwhoqWHmo2s5WMJp6wi38CiF2hYD49qVViKVvAoi";
 //    private KeyChainGroup group;
 //    private DeterministicKey watchingAccountKey;

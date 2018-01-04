@@ -18,6 +18,8 @@
 package org.bitcoinj.core;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import org.bitcoinj.params.*;
 import org.bitcoinj.script.*;
 
@@ -34,7 +36,7 @@ import org.bitcoinj.utils.VersionTally;
  * <p>NetworkParameters contains the data needed for working with an instantiation of a Bitcoin chain.</p>
  *
  * <p>This is an abstract class, concrete instantiations can be found in the params package. There are four:
- * one for the main network ({@link MainNetParams}), one for the public test network, and two others that are
+ * one for the main network ({@link MainBtcNetParams}), one for the public test network, and two others that are
  * intended for unit testing and local app development purposes. Although this class contains some aliases for
  * them, you are encouraged to call the static get() methods on each specific params class directly.</p>
  */
@@ -127,28 +129,28 @@ public abstract class NetworkParameters {
      */
     public static final Coin MAX_MONEY = COIN.multiply(MAX_COINS);
 
-    /** Alias for TestNet3Params.get(), use that instead. */
+    /** Alias for TestBtcNet3Params.get(), use that instead. */
     @Deprecated
     public static NetworkParameters testNet() {
-        return TestNet3Params.get();
+        return TestBtcNet3Params.get();
     }
 
-    /** Alias for TestNet2Params.get(), use that instead. */
+    /** Alias for TestBtcNet2Params.get(), use that instead. */
     @Deprecated
     public static NetworkParameters testNet2() {
-        return TestNet2Params.get();
+        return TestBtcNet2Params.get();
     }
 
-    /** Alias for TestNet3Params.get(), use that instead. */
+    /** Alias for TestBtcNet3Params.get(), use that instead. */
     @Deprecated
     public static NetworkParameters testNet3() {
-        return TestNet3Params.get();
+        return TestBtcNet3Params.get();
     }
 
-    /** Alias for MainNetParams.get(), use that instead */
+    /** Alias for MainBtcNetParams.get(), use that instead */
     @Deprecated
     public static NetworkParameters prodNet() {
-        return MainNetParams.get();
+        return MainBtcNetParams.get();
     }
 
     /** Returns a testnet params modified to allow any difficulty target. */
@@ -160,7 +162,7 @@ public abstract class NetworkParameters {
     /** Returns a standard regression test params (similar to unitTests) */
     @Deprecated
     public static NetworkParameters regTests() {
-        return RegTestParams.get();
+        return RegBtcTestParams.get();
     }
 
     /**
@@ -188,17 +190,17 @@ public abstract class NetworkParameters {
     @Nullable
     public static NetworkParameters fromID(String id) {
         if (id.equals(ID_BTC_MAINNET)) {
-            return MainNetParams.get();
+            return MainBtcNetParams.get();
         } else if (id.equals(ID_BTC_TESTNET)) {
-            return TestNet3Params.get();
+            return TestBtcNet3Params.get();
         } else if (id.equals(ID_BTC_UNITTESTNET)) {
             return UnitTestParams.get();
         } else if (id.equals(ID_BTC_REGTEST)) {
-            return RegTestParams.get();
+            return RegBtcTestParams.get();
         } else if (id.equals(ID_BCH_MAINNET)) {
-            return MainNetParamsBCH.get();
+            return MainBchNetParams.get();
         } else if (id.equals(ID_BCH_TESTNET)) {
-            return TestNet3ParamsBCH.get();
+            return TestBchNet3Params.get();
         } else {
             return null;
         }
@@ -208,13 +210,13 @@ public abstract class NetworkParameters {
     @Nullable
     public static NetworkParameters fromPmtProtocolID(String pmtProtocolId) {
         if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_MAINNET)) {
-            return MainNetParams.get();
+            return MainBtcNetParams.get();
         } else if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_TESTNET)) {
-            return TestNet3Params.get();
+            return TestBtcNet3Params.get();
         } else if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_UNIT_TESTS)) {
             return UnitTestParams.get();
         } else if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_REGTEST)) {
-            return RegTestParams.get();
+            return RegBtcTestParams.get();
         } else {
             return null;
         }

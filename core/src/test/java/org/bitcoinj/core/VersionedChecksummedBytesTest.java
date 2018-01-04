@@ -16,8 +16,8 @@
 
 package org.bitcoinj.core;
 
-import org.bitcoinj.params.MainNetParams;
-import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.params.MainBtcNetParams;
+import org.bitcoinj.params.TestBtcNet3Params;
 import org.junit.Test;
 
 import static org.bitcoinj.core.Utils.HEX;
@@ -29,8 +29,8 @@ import static org.junit.Assert.assertTrue;
  *
  */
 public class VersionedChecksummedBytesTest {
-    static final NetworkParameters testParams = TestNet3Params.get();
-    static final NetworkParameters mainParams = MainNetParams.get();
+    static final NetworkParameters testParams = TestBtcNet3Params.get();
+    static final NetworkParameters mainParams = MainBtcNetParams.get();
 
     @Test
     public void stringification() throws Exception {

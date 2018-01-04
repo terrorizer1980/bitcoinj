@@ -20,7 +20,6 @@ package org.bitcoinj.crypto;
 import org.bitcoinj.core.*;
 import org.bitcoinj.params.*;
 import org.junit.*;
-import org.spongycastle.crypto.params.*;
 
 import static org.bitcoinj.core.Utils.*;
 import static org.junit.Assert.*;
@@ -158,12 +157,12 @@ public class ChildKeyDerivationTest {
     @Test
     public void testSerializationMainAndTestNetworks() {
         DeterministicKey key1 = HDKeyDerivation.createMasterPrivateKey("satoshi lives!".getBytes());
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = MainBtcNetParams.get();
         String pub58 = key1.serializePubB58(params);
         String priv58 = key1.serializePrivB58(params);
         assertEquals("xpub661MyMwAqRbcF7mq7Aejj5xZNzFfgi3ABamE9FedDHVmViSzSxYTgAQGcATDo2J821q7Y9EAagjg5EP3L7uBZk11PxZU3hikL59dexfLkz3", pub58);
         assertEquals("xprv9s21ZrQH143K2dhN197jMx1ppxRBHFKJpMqdLsF1ewxncv7quRED8N5nksxphju3W7naj1arF56L5PUEWfuSk8h73Sb2uh7bSwyXNrjzhAZ", priv58);
-        params = TestNet3Params.get();
+        params = TestBtcNet3Params.get();
         pub58 = key1.serializePubB58(params);
         priv58 = key1.serializePrivB58(params);
         assertEquals("tpubD6NzVbkrYhZ4WuxgZMdpw1Hvi7MKg6YDjDMXVohmZCFfF17hXBPYpc56rCY1KXFMovN29ik37nZimQseiykRTBTJTZJmjENyv2k3R12BJ1M", pub58);
@@ -177,7 +176,7 @@ public class ChildKeyDerivationTest {
 
         // Creation time can't survive the xpub serialization format unfortunately.
         key1.setCreationTimeSeconds(0);
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = MainBtcNetParams.get();
 
         {
             final String pub58 = key1.serializePubB58(params);
@@ -229,8 +228,9 @@ public class ChildKeyDerivationTest {
         // https://en.bitcoin.it/wiki/BIP_0032_TestVectors
         String encoded =
             "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVJrZwQY4VUNgqFJPMM3No2dFDFGTsxxpG5uJh7n7epu4trkrX7x7DogT5Uv6fcLW5";
-        DeterministicKey key = DeterministicKey.deserializeB58(encoded, MainNetParams.get());
-        assertEquals("Reserialized parentless private HD key is wrong", key.serializePubB58(MainNetParams.get()), encoded);
+        DeterministicKey key = DeterministicKey.deserializeB58(encoded, MainBtcNetParams.get());
+        assertEquals("Reserialized parentless private HD key is wrong", key.serializePubB58(
+            MainBtcNetParams.get()), encoded);
         assertEquals("Depth of deserialized parentless public HD key is wrong", key.getDepth(), 3);
         assertEquals("Path size of deserialized parentless public HD key is wrong", key.getPath().size(), 1);
         assertEquals("Parent fingerprint of deserialized parentless public HD key is wrong",
@@ -239,8 +239,9 @@ public class ChildKeyDerivationTest {
         // This encoding is the same key but including its private data:
         encoded =
             "xprv9z4pot5VBttmtdRTWfWQmoH1taj2axGVzFqSb8C9xaxKymcFzXBDptWmT7FwuEzG3ryjH4ktypQSAewRiNMjANTtpgP4mLTj34bhnZX7UiM";
-        key = DeterministicKey.deserializeB58(encoded, MainNetParams.get());
-        assertEquals("Reserialized parentless private HD key is wrong", key.serializePrivB58(MainNetParams.get()), encoded);
+        key = DeterministicKey.deserializeB58(encoded, MainBtcNetParams.get());
+        assertEquals("Reserialized parentless private HD key is wrong", key.serializePrivB58(
+            MainBtcNetParams.get()), encoded);
         assertEquals("Depth of deserialized parentless private HD key is wrong", key.getDepth(), 3);
         assertEquals("Path size of deserialized parentless private HD key is wrong", key.getPath().size(), 1);
         assertEquals("Parent fingerprint of deserialized parentless private HD key is wrong",
@@ -248,10 +249,12 @@ public class ChildKeyDerivationTest {
 
         // These encodings are of the the root key of that hierarchy
         assertEquals("Parent fingerprint of root node public HD key should be zero",
-                          DeterministicKey.deserializeB58("xpub661MyMwAqRbcFW31YEwpkMuc5THy2PSt5bDMsktWQcFF8syAmRUapSCGu8ED9W6oDMSgv6Zz8idoc4a6mr8BDzTJY47LJhkJ8UB7WEGuduB", MainNetParams.get()).getParentFingerprint(),
+                          DeterministicKey.deserializeB58("xpub661MyMwAqRbcFW31YEwpkMuc5THy2PSt5bDMsktWQcFF8syAmRUapSCGu8ED9W6oDMSgv6Zz8idoc4a6mr8BDzTJY47LJhkJ8UB7WEGuduB", MainBtcNetParams
+                              .get()).getParentFingerprint(),
                           0);
         assertEquals("Parent fingerprint of root node private HD key should be zero",
-                          DeterministicKey.deserializeB58("xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U", MainNetParams.get()).getParentFingerprint(),
+                          DeterministicKey.deserializeB58("xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U", MainBtcNetParams
+                              .get()).getParentFingerprint(),
                           0);
 
     }

@@ -16,7 +16,7 @@
 
 package org.bitcoinj.core;
 
-import org.bitcoinj.params.RegTestParams;
+import org.bitcoinj.params.RegBtcTestParams;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -37,7 +37,7 @@ public class SendHeadersMessageTest {
                         + "c96fe88d4a0f01ed9dedae2b6f9e00da94cad0fecaae66ecf689bf71b50000000000000000000000000000000000000000000000000");
 
         ByteBuffer buffer = ByteBuffer.wrap(message);
-        RegTestParams params = org.bitcoinj.params.RegTestParams.get();
+        RegBtcTestParams params = RegBtcTestParams.get();
         BitcoinSerializer serializer = new BitcoinSerializer(params, false);
         assertTrue(serializer.deserialize(buffer) instanceof org.bitcoinj.core.SendHeadersMessage);
     }

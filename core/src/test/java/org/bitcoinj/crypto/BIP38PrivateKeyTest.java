@@ -18,8 +18,8 @@ package org.bitcoinj.crypto;
 
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.crypto.BIP38PrivateKey.BadPassphraseException;
-import org.bitcoinj.params.MainNetParams;
-import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.params.MainBtcNetParams;
+import org.bitcoinj.params.TestBtcNet3Params;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -34,8 +34,8 @@ import static org.junit.Assert.assertNotSame;
 @Ignore
 public class BIP38PrivateKeyTest {
 
-    private static final MainNetParams MAINNET = MainNetParams.get();
-    private static final TestNet3Params TESTNET = TestNet3Params.get();
+    private static final MainBtcNetParams MAINNET = MainBtcNetParams.get();
+    private static final TestBtcNet3Params TESTNET = TestBtcNet3Params.get();
 
     @Test
     public void bip38testvector_noCompression_noEcMultiply_test1() throws Exception {
@@ -72,7 +72,7 @@ public class BIP38PrivateKeyTest {
 
     @Test
     public void bip38testvector_compression_noEcMultiply_test1() throws Exception {
-        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainNetParams.get(),
+        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainBtcNetParams.get(),
                 "6PYNKZ1EAgYgmQfmNVamxyXVWHzK5s6DGhwP4J5o44cvXdoY7sRzhtpUeo");
         ECKey key = encryptedKey.decrypt("TestingOneTwoThree");
         assertEquals("L44B5gGEpqEDRS9vVPz7QT35jcBG2r3CZwSwQ4fCewXAhAhqGVpP", key.getPrivateKeyEncoded(MAINNET)
@@ -81,7 +81,7 @@ public class BIP38PrivateKeyTest {
 
     @Test
     public void bip38testvector_compression_noEcMultiply_test2() throws Exception {
-        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainNetParams.get(),
+        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainBtcNetParams.get(),
                 "6PYLtMnXvfG3oJde97zRyLYFZCYizPU5T3LwgdYJz1fRhh16bU7u6PPmY7");
         ECKey key = encryptedKey.decrypt("Satoshi");
         assertEquals("KwYgW8gcxj1JWJXhPSu4Fqwzfhp5Yfi42mdYmMa4XqK7NJxXUSK7", key.getPrivateKeyEncoded(MAINNET)
@@ -90,7 +90,7 @@ public class BIP38PrivateKeyTest {
 
     @Test
     public void bip38testvector_ecMultiply_noCompression_noLotAndSequence_test1() throws Exception {
-        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainNetParams.get(),
+        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainBtcNetParams.get(),
                 "6PfQu77ygVyJLZjfvMLyhLMQbYnu5uguoJJ4kMCLqWwPEdfpwANVS76gTX");
         ECKey key = encryptedKey.decrypt("TestingOneTwoThree");
         assertEquals("5K4caxezwjGCGfnoPTZ8tMcJBLB7Jvyjv4xxeacadhq8nLisLR2", key.getPrivateKeyEncoded(MAINNET)
@@ -99,7 +99,7 @@ public class BIP38PrivateKeyTest {
 
     @Test
     public void bip38testvector_ecMultiply_noCompression_noLotAndSequence_test2() throws Exception {
-        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainNetParams.get(),
+        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainBtcNetParams.get(),
                 "6PfLGnQs6VZnrNpmVKfjotbnQuaJK4KZoPFrAjx1JMJUa1Ft8gnf5WxfKd");
         ECKey key = encryptedKey.decrypt("Satoshi");
         assertEquals("5KJ51SgxWaAYR13zd9ReMhJpwrcX47xTJh2D3fGPG9CM8vkv5sH", key.getPrivateKeyEncoded(MAINNET)
@@ -108,7 +108,7 @@ public class BIP38PrivateKeyTest {
 
     @Test
     public void bip38testvector_ecMultiply_noCompression_lotAndSequence_test1() throws Exception {
-        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainNetParams.get(),
+        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainBtcNetParams.get(),
                 "6PgNBNNzDkKdhkT6uJntUXwwzQV8Rr2tZcbkDcuC9DZRsS6AtHts4Ypo1j");
         ECKey key = encryptedKey.decrypt("MOLON LABE");
         assertEquals("5JLdxTtcTHcfYcmJsNVy1v2PMDx432JPoYcBTVVRHpPaxUrdtf8", key.getPrivateKeyEncoded(MAINNET)
@@ -117,7 +117,7 @@ public class BIP38PrivateKeyTest {
 
     @Test
     public void bip38testvector_ecMultiply_noCompression_lotAndSequence_test2() throws Exception {
-        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainNetParams.get(),
+        BIP38PrivateKey encryptedKey = BIP38PrivateKey.fromBase58(MainBtcNetParams.get(),
                 "6PgGWtx25kUg8QWvwuJAgorN6k9FbE25rv5dMRwu5SKMnfpfVe5mar2ngH");
         ECKey key = encryptedKey.decrypt("ΜΟΛΩΝ ΛΑΒΕ");
         assertEquals("5KMKKuUmAkiNbA3DazMQiLfDq47qs8MAEThm4yL8R2PhV1ov33D", key.getPrivateKeyEncoded(MAINNET)

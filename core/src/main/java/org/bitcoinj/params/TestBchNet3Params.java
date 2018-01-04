@@ -24,8 +24,8 @@ import org.bitcoinj.core.Utils;
  * Parameters for the testnet, a separate public instance of Bitcoin that has relaxed rules suitable for development
  * and testing of applications and new Bitcoin versions.
  */
-public class TestNet3ParamsBCH extends AbstractBitcoinCashNetParams {
-    public TestNet3ParamsBCH() {
+public class TestBchNet3Params extends AbstractBchNetParams {
+    public TestBchNet3Params() {
         super();
         id = ID_BCH_TESTNET;
         // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
@@ -45,15 +45,15 @@ public class TestNet3ParamsBCH extends AbstractBitcoinCashNetParams {
         segwitPrefix = "bchtest";
         segwitSeparator = 0x3a; // :
 
-        majorityEnforceBlockUpgrade = TestNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
-        majorityRejectBlockOutdated = TestNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;
-        majorityWindow = TestNet2Params.TESTNET_MAJORITY_WINDOW;
+        majorityEnforceBlockUpgrade = TestBtcNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
+        majorityRejectBlockOutdated = TestBtcNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;
+        majorityWindow = TestBtcNet2Params.TESTNET_MAJORITY_WINDOW;
     }
 
-    private static TestNet3ParamsBCH instance;
-    public static synchronized TestNet3ParamsBCH get() {
+    private static TestBchNet3Params instance;
+    public static synchronized TestBchNet3Params get() {
         if (instance == null) {
-            instance = new TestNet3ParamsBCH();
+            instance = new TestBchNet3Params();
         }
         return instance;
     }

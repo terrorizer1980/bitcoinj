@@ -17,9 +17,7 @@
 
 package org.bitcoinj.core;
 
-import org.bitcoinj.params.MainNetParams;
 import com.google.common.base.Objects;
-import com.google.common.net.InetAddresses;
 
 import java.io.IOException;
 import java.io.OutputStream;

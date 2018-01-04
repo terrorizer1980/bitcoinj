@@ -22,7 +22,7 @@ import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.MainBtcNetParams;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,7 +148,7 @@ public class BIP32Test {
     private void testVector(int testCase) {
         log.info("=======  Test vector {}", testCase);
         HDWTestVector tv = tvs[testCase];
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = MainBtcNetParams.get();
         DeterministicKey masterPrivateKey = HDKeyDerivation.createMasterPrivateKey(HEX.decode(tv.seed));
         assertEquals(testEncode(tv.priv), testEncode(masterPrivateKey.serializePrivB58(params)));
         assertEquals(testEncode(tv.pub), testEncode(masterPrivateKey.serializePubB58(params)));

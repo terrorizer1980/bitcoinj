@@ -20,7 +20,7 @@ import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.AbstractBitcoinNetParams;
+import org.bitcoinj.params.AbstractBtcNetParams;
 
 import javax.annotation.Nullable;
 
@@ -116,7 +116,7 @@ public class BitcoinURI {
         checkNotNull(input);
 
         String scheme = null == params
-            ? AbstractBitcoinNetParams.BITCOIN_SCHEME
+            ? AbstractBtcNetParams.BITCOIN_SCHEME
             : params.getUriScheme();
 
         // Attempt to form the URI (fail fast syntax checking to official standards).

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Parameters for Bitcoincash-like networks.
  */
-public abstract class AbstractBitcoinCashNetParams extends NetworkParameters {
+public abstract class AbstractBchNetParams extends NetworkParameters {
 
     /**
      * Scheme part for Bitcoin Cash URIs.
@@ -37,12 +37,12 @@ public abstract class AbstractBitcoinCashNetParams extends NetworkParameters {
     private String uriScheme = BITCOIN_SCHEME;
     public static final int REWARD_HALVING_INTERVAL = 210000;
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractBitcoinCashNetParams.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractBchNetParams.class);
 
     /**
      * Constructor which defaults to bitcoin uri scheme.
      */
-    public AbstractBitcoinCashNetParams() {
+    public AbstractBchNetParams() {
         super();
     }
 

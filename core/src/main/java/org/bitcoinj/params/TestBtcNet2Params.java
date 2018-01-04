@@ -1,6 +1,5 @@
 /*
  * Copyright 2013 Google Inc.
- * Copyright 2014 Andreas Schildbach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,46 +19,50 @@ package org.bitcoinj.params;
 import org.bitcoinj.core.Utils;
 
 /**
- * Parameters for the testnet, a separate public instance of Bitcoin that has relaxed rules suitable for development
- * and testing of applications and new Bitcoin versions.
+ * Parameters for the old version 2 testnet. This is not useful to you - it exists only because some unit tests are
+ * based on it.
  */
-public class TestNet3Params extends AbstractBitcoinNetParams {
-    public TestNet3Params() {
+public class TestBtcNet2Params extends AbstractBtcNetParams {
+    public static final int TESTNET_MAJORITY_WINDOW = 100;
+    public static final int TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED = 75;
+    public static final int TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE = 51;
+
+    public TestBtcNet2Params() {
         super();
+        init();
+    }
+
+    private void init() {
         id = ID_BTC_TESTNET;
-        // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
-        packetMagic = 0x0b110907;
-        interval = INTERVAL;
-        targetTimespan = TARGET_TIMESPAN;
-        maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
+        packetMagic = 0xfabfb5daL;
         addressHeader = 111;
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
+        interval = INTERVAL;
+        targetTimespan = TARGET_TIMESPAN;
+        maxTarget = Utils.decodeCompactBits(0x1d0fffffL);
         dumpedPrivateKeyHeader = 239;
         spendableCoinbaseDepth = 100;
-        alertSigningKey = Utils.HEX.decode("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
-
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
         segwitPrefix = "tb";
         segwitSeparator = 0x31; // 1
 
-        majorityEnforceBlockUpgrade = TestNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
-        majorityRejectBlockOutdated = TestNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;
-        majorityWindow = TestNet2Params.TESTNET_MAJORITY_WINDOW;
+        majorityEnforceBlockUpgrade = TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
+        majorityRejectBlockOutdated = TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;
+        majorityWindow = TESTNET_MAJORITY_WINDOW;
     }
 
-    private static TestNet3Params instance;
-    public static synchronized TestNet3Params get() {
+    private static TestBtcNet2Params instance;
+    public static synchronized TestBtcNet2Params get() {
         if (instance == null) {
-            instance = new TestNet3Params();
+            instance = new TestBtcNet2Params();
         }
         return instance;
     }
 
     @Override
     public String getPaymentProtocolId() {
-        return PAYMENT_PROTOCOL_ID_TESTNET;
+        return null;
     }
-
 }
