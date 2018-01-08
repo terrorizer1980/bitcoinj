@@ -38,8 +38,6 @@ public class BitcoinTestNet2Params extends AbstractNetParams {
         addressHeader = 111;
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        interval = INTERVAL;
-        targetTimespan = TARGET_TIMESPAN;
         maxTarget = Utils.decodeCompactBits(0x1d0fffffL);
         dumpedPrivateKeyHeader = 239;
         spendableCoinbaseDepth = 100;

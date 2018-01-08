@@ -74,8 +74,6 @@ public abstract class NetworkParameters {
     protected int addressHeader;
     protected int p2shHeader;
     protected int dumpedPrivateKeyHeader;
-    protected int interval;
-    protected int targetTimespan;
     protected byte[] alertSigningKey;
     protected int bip32HeaderPub;
     protected int bip32HeaderPriv;
@@ -97,8 +95,7 @@ public abstract class NetworkParameters {
      * The depth of blocks required for a coinbase transaction to be spendable.
      */
     protected int spendableCoinbaseDepth;
-//    protected int subsidyDecreaseBlockCount;
-    
+
     protected int[] acceptableAddressCodes;
     protected transient MessageSerializer defaultSerializer = null;
 
@@ -106,10 +103,6 @@ public abstract class NetworkParameters {
         alertSigningKey = SATOSHI_KEY;
     }
 
-    public static final int TARGET_TIMESPAN = 14 * 24 * 60 * 60;  // 2 weeks per difficulty cycle, on average.
-    public static final int TARGET_SPACING = 10 * 60;  // 10 minutes per block.
-    public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING;
-    
     /**
      * Blocks with a timestamp after this should enforce BIP 16, aka "Pay to script hash". This BIP changed the
      * network rules in a soft-forking manner, that is, blocks that don't follow the rules are accepted but not
@@ -251,15 +244,6 @@ public abstract class NetworkParameters {
     }
 
     /**
-     * How much time in seconds is supposed to pass between "interval" blocks. If the actual elapsed time is
-     * significantly different from this value, the network difficulty formula will produce a different value. Both
-     * test and main Bitcoin networks use 2 weeks (1209600 seconds).
-     */
-    public int getTargetTimespan() {
-        return targetTimespan;
-    }
-
-    /**
      * The version codes that prefix addresses which are acceptable on this network. Although Satoshi intended these to
      * be used for "versioning", in fact they are today used to discriminate what kind of data is contained in the
      * address and to prevent accidentally sending coins across chains which would destroy them.
@@ -273,11 +257,6 @@ public abstract class NetworkParameters {
      */
     public boolean allowEmptyPeerChain() {
         return true;
-    }
-
-    /** How many blocks pass between difficulty adjustment periods. Bitcoin standardises this to be 2016. */
-    public int getInterval() {
-        return interval;
     }
 
     /** Maximum target represents the easiest allowable proof of work. */

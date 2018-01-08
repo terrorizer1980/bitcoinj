@@ -30,8 +30,6 @@ public class BitcoinCashMainNetParams extends AbstractNetParams {
 
     public BitcoinCashMainNetParams() {
         super();
-        interval = INTERVAL;
-        targetTimespan = TARGET_TIMESPAN;
         maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
         dumpedPrivateKeyHeader = 128;
         addressHeader = 0;

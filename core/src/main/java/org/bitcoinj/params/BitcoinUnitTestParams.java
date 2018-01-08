@@ -35,9 +35,7 @@ public class BitcoinUnitTestParams extends AbstractNetParams {
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         maxTarget = new BigInteger("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
-        interval = 10;
         dumpedPrivateKeyHeader = 239;
-        targetTimespan = 200000000;  // 6 years. Just a very big number.
         spendableCoinbaseDepth = 5;
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
