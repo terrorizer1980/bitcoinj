@@ -206,26 +206,6 @@ public class AddressTest {
     }
 
     @Test
-    public void roundtripBech32() throws Exception {
-        String bech32 = "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4";
-        assertEquals(bech32, Address.fromBech32(BitcoinMainNetParams.get(), bech32).toBech32());
-    }
-
-    @Test
-    public void roundtripBase58ToBech32() throws Exception {
-        String base58 = "1FJJdX5g1DX7FRxJBhJNTDrRjTeihhsJLs";
-        String bech32 = "bc1qnntcclssmtuvfw2te7q49lzvw67cfvpzxger4j";
-        assertEquals(bech32, Address.fromBase58(BitcoinMainNetParams.get(), base58).toBech32());
-    }
-
-    @Test
-    public void roundtripBech32ToBase58() throws Exception {
-        String base58 = "1FJJdX5g1DX7FRxJBhJNTDrRjTeihhsJLs";
-        String bech32 = "bc1qnntcclssmtuvfw2te7q49lzvw67cfvpzxger4j";
-        assertEquals(base58, Address.fromBech32(BitcoinMainNetParams.get(), bech32).toBase58());
-    }
-
-    @Test
     public void comparisonCloneEqualTo() throws Exception {
         Address a = Address.fromBase58(mainParams, "1Dorian4RoXcnBv9hnQ4Y2C1an6NJ4UrjX");
         Address b = a.clone();

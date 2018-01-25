@@ -18,15 +18,17 @@
 
 package org.bitcoinj.core;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import javax.annotation.Nullable;
+
 import org.bitcoinj.params.Networks;
 import org.bitcoinj.script.Script;
+
+import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * <p>A Bitcoin address looks like 1MsScoe2fTJoq4ZPdQgqyhgWeoNamYPevy and is derived from an elliptic curve public key
@@ -50,7 +52,7 @@ public class Address extends VersionedChecksummedBytes {
     /**
      * Construct an address from parameters, the address version, and the hash160 form. Example:<p>
      *
-     * <pre>new Address(BitcoinMainNetParams.get(), NetworkParameters.getAddressHeader(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
+     * <pre>new Address(MainNetParams.get(), NetworkParameters.getAddressHeader(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
      */
     public Address(NetworkParameters params, int version, byte[] hash160) throws WrongNetworkException {
         super(version, hash160);
@@ -88,17 +90,13 @@ public class Address extends VersionedChecksummedBytes {
      *             if the given address is valid but for a different chain (eg testnet vs mainnet)
      */
     public static Address fromBase58(@Nullable NetworkParameters params, String base58) throws AddressFormatException {
-        return new Address(params, base58, true);
-    }
-
-    public static Address fromBech32(@Nullable NetworkParameters params, String bech32) throws AddressFormatException {
-        return new Address(params, bech32, false);
+        return new Address(params, base58);
     }
 
     /**
      * Construct an address from parameters and the hash160 form. Example:<p>
      *
-     * <pre>new Address(BitcoinMainNetParams.get(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
+     * <pre>new Address(MainNetParams.get(), Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));</pre>
      */
     public Address(NetworkParameters params, byte[] hash160) {
         super(params.getAddressHeader(), hash160);
@@ -108,8 +106,8 @@ public class Address extends VersionedChecksummedBytes {
 
     /** @deprecated Use {@link #fromBase58(NetworkParameters, String)} */
     @Deprecated
-    public Address(@Nullable NetworkParameters params, String address, boolean isBase58) throws AddressFormatException {
-        super(address, params, isBase58);
+    public Address(@Nullable NetworkParameters params, String address) throws AddressFormatException {
+        super(address);
         if (params != null) {
             if (!isAcceptableVersion(params, version)) {
                 throw new WrongNetworkException(version, params.getAcceptableAddressCodes());
@@ -203,7 +201,11 @@ public class Address extends VersionedChecksummedBytes {
         params = NetworkParameters.fromID(in.readUTF());
     }
 
-    public String toBech32() {
-        return toBech32(params);
+    public String toCashAddress() {
+        if (isP2SHAddress() ) {
+            return CashAddress.encode(params.segwitPrefix, CashAddress.P2SH, bytes);
+        } else {
+            return CashAddress.encode(params.segwitPrefix, CashAddress.P2PKH, bytes);
+        }
     }
 }
