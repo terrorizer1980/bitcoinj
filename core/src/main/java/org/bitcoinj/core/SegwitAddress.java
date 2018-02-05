@@ -8,7 +8,7 @@ public class SegwitAddress {
 
     public static SegwitAddressParts decode(NetworkParameters params, String addr)  {
 
-        String hrp = params.getSegwitAddressPrefix();
+        String hrp = params.getBech32AddressPrefix();
         Bech32Parts p = Bech32.decode(params, addr);
 
         String hrpgotStr =  p.getPrefix();

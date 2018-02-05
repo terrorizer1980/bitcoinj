@@ -203,9 +203,9 @@ public class Address extends VersionedChecksummedBytes {
 
     public String toCashAddress() {
         if (isP2SHAddress() ) {
-            return CashAddress.encode(params.segwitPrefix, CashAddress.P2SH, bytes);
+            return CashAddress.encode(params.bech32Prefix, CashAddress.P2SH, bytes);
         } else {
-            return CashAddress.encode(params.segwitPrefix, CashAddress.P2PKH, bytes);
+            return CashAddress.encode(params.bech32Prefix, CashAddress.P2PKH, bytes);
         }
     }
 }

@@ -41,8 +41,8 @@ public class BitcoinCashTestNet3Params extends AbstractNetParams {
         uriScheme = "bitcoincash";
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
-        segwitPrefix = "bchtest";
-        segwitSeparator = 0x3a; // :
+        bech32Prefix = "bchtest";
+        bech32Separator = 0x3a; // :
 
         majorityEnforceBlockUpgrade = BitcoinTestNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = BitcoinTestNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;

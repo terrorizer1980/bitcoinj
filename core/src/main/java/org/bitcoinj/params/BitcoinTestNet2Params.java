@@ -45,8 +45,8 @@ public class BitcoinTestNet2Params extends AbstractNetParams {
         uriScheme = "bitcoin";
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
-        segwitPrefix = "tb";
-        segwitSeparator = 0x31; // 1
+        bech32Prefix = "tb";
+        bech32Separator = 0x31; // 1
 
         majorityEnforceBlockUpgrade = TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;

@@ -2,6 +2,7 @@ package org.bitcoinj.core;
 
 import com.google.common.collect.ImmutableBiMap;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import org.spongycastle.util.encoders.Hex;
 
 public class CashAddress {
@@ -110,6 +111,31 @@ public class CashAddress {
             result.prefix,
             Hex.toHexString(data)
         );
+    }
+
+    public static String toLegacy(NetworkParameters networkParameters, String address) {
+
+        CashAddress cashAddress = CashAddress.decode(address);
+
+        int versionByte;
+        if (cashAddress.scriptType == CashAddress.P2PKH) {
+            versionByte = networkParameters.addressHeader;
+        } else {
+            versionByte = networkParameters.p2shHeader;
+        }
+
+        byte[] cashAddressBuffer = Hex.decode(cashAddress.hash);
+
+        //Remove cashAddr version byte
+        byte[] data = new byte[cashAddressBuffer.length - 1];
+        System.arraycopy(cashAddressBuffer, 1, data, 0, cashAddressBuffer.length - 1);
+
+        //Add legacy version byte
+        ByteBuffer bb = ByteBuffer.allocate(cashAddressBuffer.length);
+        bb.put((byte)versionByte);
+        bb.put(data);
+
+        return new Address(networkParameters, versionByte, data).toBase58();
     }
 
     public static class VersionPayload {

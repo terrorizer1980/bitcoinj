@@ -77,8 +77,8 @@ public abstract class NetworkParameters {
     protected byte[] alertSigningKey;
     protected int bip32HeaderPub;
     protected int bip32HeaderPriv;
-    protected String segwitPrefix;
-    protected byte segwitSeparator;
+    protected String bech32Prefix;
+    protected byte bech32Separator;
 
     /** Used to check majorities for block version upgrade */
     protected int majorityEnforceBlockUpgrade;
@@ -415,12 +415,12 @@ public abstract class NetworkParameters {
         return verifyFlags;
     }
 
-    public String getSegwitAddressPrefix() {
-        return segwitPrefix;
+    public String getBech32AddressPrefix() {
+        return bech32Prefix;
     }
 
-    public byte getSegwitAddressSeparator() {
-        return segwitSeparator;
+    public byte getBech32AddressSeparator() {
+        return bech32Separator;
     }
 
     public abstract int getProtocolVersionNum(final ProtocolVersion version);

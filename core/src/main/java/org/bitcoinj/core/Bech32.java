@@ -29,8 +29,8 @@ public class Bech32 {
      */
     public static String encode(NetworkParameters params, byte[] data) throws AddressFormatException {
 
-        String prefix = params.getSegwitAddressPrefix();
-        byte separator = params.getSegwitAddressSeparator();
+        String prefix = params.getBech32AddressPrefix();
+        byte separator = params.getBech32AddressSeparator();
 
         byte[] checksum = createChecksum(prefix.getBytes(), data);
         byte[] combined = new byte[checksum.length + data.length];
@@ -66,7 +66,7 @@ public class Bech32 {
         }
 
         bech = bech.toLowerCase();
-        int pos = bech.lastIndexOf(params.getSegwitAddressSeparator());
+        int pos = bech.lastIndexOf(params.getBech32AddressSeparator());
         if (pos < 1) {
             throw new AddressFormatException("bech32 missing separator");
         } else if (pos + 7 > bech.length()) {
