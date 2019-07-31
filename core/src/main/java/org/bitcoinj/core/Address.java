@@ -63,6 +63,34 @@ public class Address extends VersionedChecksummedBytes {
         this.params = params;
     }
 
+    /**
+     * Construct a {@link Address} that represents the given pubkey hash. The resulting address will be a P2PKH type of
+     * address.
+     *
+     * @param params
+     *            network this address is valid for
+     * @param hash160
+     *            20-byte pubkey hash
+     * @return constructed address
+     */
+    public static Address fromPubKeyHash(NetworkParameters params, byte[] hash160) throws AddressFormatException {
+        return new Address(params, hash160);
+    }
+
+    /**
+     * Construct a {@link Address} that represents the public part of the given {@link ECKey}. Note that an address is
+     * derived from a hash of the public key and is not the public key itself.
+     *
+     * @param params
+     *            network this address is valid for
+     * @param key
+     *            only the public part is used
+     * @return constructed address
+     */
+    public static Address fromKey(NetworkParameters params, ECKey key) {
+        return fromPubKeyHash(params, key.getPubKeyHash());
+    }
+
     /** Returns an Address that represents the given P2SH script hash. */
     public static Address fromP2SHHash(NetworkParameters params, byte[] hash160) {
         try {
