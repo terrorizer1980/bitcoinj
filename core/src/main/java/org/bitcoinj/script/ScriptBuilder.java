@@ -19,6 +19,7 @@ package org.bitcoinj.script;
 import com.google.common.collect.Lists;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.SegwitAddress;
 import org.bitcoinj.core.Utils;
 import org.bitcoinj.crypto.TransactionSignature;
 
@@ -212,6 +213,11 @@ public class ScriptBuilder {
         return new Script(chunks);
     }
 
+    /** Creates an empty script. */
+    public static Script createEmpty() {
+        return new ScriptBuilder().build();
+    }
+
     /** Creates a scriptPubKey that encodes payment to the given address. */
     public static Script createOutputScript(Address to) {
         if (to.isP2SHAddress()) {
@@ -386,6 +392,54 @@ public class ScriptBuilder {
 
         checkState(inserted);
         return builder.build();
+    }
+
+    /** Creates a scriptPubKey that encodes payment to the given raw public key. */
+    public static Script createP2PKOutputScript(byte[] pubKey) {
+        return new ScriptBuilder().data(pubKey).op(OP_CHECKSIG).build();
+    }
+
+    /** Creates a scriptPubKey that encodes payment to the given raw public key. */
+    public static Script createP2PKOutputScript(ECKey pubKey) {
+        return createP2PKOutputScript(pubKey.getPubKey());
+    }
+
+    /**
+     * Creates a scriptPubKey that sends to the given public key hash.
+     */
+    public static Script createP2PKHOutputScript(byte[] hash) {
+        checkArgument(hash.length == Address.LENGTH);
+        ScriptBuilder builder = new ScriptBuilder();
+        builder.op(OP_DUP);
+        builder.op(OP_HASH160);
+        builder.data(hash);
+        builder.op(OP_EQUALVERIFY);
+        builder.op(OP_CHECKSIG);
+        return builder.build();
+    }
+
+    /**
+     * Creates a scriptPubKey that sends to the given public key.
+     */
+    public static Script createP2PKHOutputScript(ECKey key) {
+        checkArgument(key.isCompressed());
+        return createP2PKHOutputScript(key.getPubKeyHash());
+    }
+
+    /**
+     * Creates a segwit scriptPubKey that sends to the given public key hash.
+     */
+    public static Script createP2WPKHOutputScript(byte[] hash) {
+        checkArgument(hash.length == SegwitAddress.WITNESS_PROGRAM_LENGTH_PKH);
+        return new ScriptBuilder().smallNum(0).data(hash).build();
+    }
+
+    /**
+     * Creates a segwit scriptPubKey that sends to the given public key.
+     */
+    public static Script createP2WPKHOutputScript(ECKey key) {
+        checkArgument(key.isCompressed());
+        return createP2WPKHOutputScript(key.getPubKeyHash());
     }
 
     /**

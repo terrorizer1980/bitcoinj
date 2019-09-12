@@ -56,6 +56,13 @@ public class Utils {
 
     public static final Joiner SPACE_JOINER = Joiner.on(" ");
 
+    /**
+     * Max initial size of variable length arrays and ArrayLists that could be attacked.
+     * Avoids this attack: Attacker sends a msg indicating it will contain a huge number (eg 2 billion) elements (eg transaction inputs) and
+     * forces bitcoinj to try to allocate a huge piece of the memory resulting in OutOfMemoryError.
+     */
+    public static final int MAX_INITIAL_ARRAY_LENGTH = 20;
+
     private static BlockingQueue<Boolean> mockSleepQueue;
 
     /**
@@ -644,5 +651,12 @@ public class Utils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String toString(List<byte[]> stack) {
+        List<String> parts = new ArrayList<>(stack.size());
+        for (byte[] push : stack)
+            parts.add('[' + HEX.encode(push) + ']');
+        return SPACE_JOINER.join(parts);
     }
 }

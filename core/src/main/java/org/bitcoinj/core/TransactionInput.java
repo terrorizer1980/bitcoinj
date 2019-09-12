@@ -81,6 +81,8 @@ public class TransactionInput extends ChildMessage {
     @Nullable
     private Coin value;
 
+    private TransactionWitness witness;
+
     /**
      * Creates an input that connects to nothing - used only in creation of coinbase transactions.
      */
@@ -143,6 +145,17 @@ public class TransactionInput extends ChildMessage {
             throws ProtocolException {
         super(params, payload, offset, parentTransaction, serializer, UNKNOWN_LENGTH);
         this.value = null;
+    }
+
+    /**
+     * Gets the index of this input in the parent transaction, or throws if this input is free standing. Iterates
+     * over the parents list to discover this.
+     */
+    public int getIndex() {
+        final int myIndex = getParentTransaction().getInputs().indexOf(this);
+        if (myIndex < 0)
+            throw new IllegalStateException("Input linked to wrong parent transaction?");
+        return myIndex;
     }
 
     @Override
@@ -278,6 +291,31 @@ public class TransactionInput extends ChildMessage {
     @Nullable
     public Coin getValue() {
         return value;
+    }
+
+    /**
+     * Get the transaction witness of this input.
+     *
+     * @return the witness of the input
+     */
+    public TransactionWitness getWitness() {
+        return witness != null ? witness : TransactionWitness.EMPTY;
+    }
+
+    /**
+     * Set the transaction witness of an input.
+     */
+    public void setWitness(TransactionWitness witness) {
+        this.witness = witness;
+    }
+
+    /**
+     * Determine if the transaction has witnesses.
+     *
+     * @return true if the transaction has witnesses
+     */
+    public boolean hasWitness() {
+        return witness != null && witness.getPushCount() != 0;
     }
 
     public enum ConnectionResult {
@@ -445,14 +483,14 @@ public class TransactionInput extends ChildMessage {
      */
     public void verify(TransactionOutput output) throws VerificationException {
         if (output.parent != null) {
-            if (!getOutpoint().getHash().equals(output.getParentTransaction().getHash()))
+            if (!getOutpoint().getHash().equals(output.getParentTransaction().getTxId()))
                 throw new VerificationException("This input does not refer to the tx containing the output.");
             if (getOutpoint().getIndex() != output.getIndex())
                 throw new VerificationException("This input refers to a different output on the given tx.");
         }
         Script pubKey = output.getScriptPubKey();
-        int myIndex = getParentTransaction().getInputs().indexOf(this);
-        getScriptSig().correctlySpends(getParentTransaction(), myIndex, pubKey);
+        getScriptSig().correctlySpends(getParentTransaction(), getIndex(), getWitness(), getValue(), pubKey,
+                Script.ALL_VERIFY_FLAGS);
     }
 
     /**

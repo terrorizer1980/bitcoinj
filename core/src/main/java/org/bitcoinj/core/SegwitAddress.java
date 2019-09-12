@@ -5,6 +5,10 @@ import java.util.List;
 import org.bitcoinj.core.Bech32.Bech32Parts;
 
 public class SegwitAddress {
+    public static final int WITNESS_PROGRAM_LENGTH_PKH = 20;
+    public static final int WITNESS_PROGRAM_LENGTH_SH = 32;
+    public static final int WITNESS_PROGRAM_MIN_LENGTH = 2;
+    public static final int WITNESS_PROGRAM_MAX_LENGTH = 40;
 
     public static SegwitAddressParts decode(NetworkParameters params, String addr)  {
 
